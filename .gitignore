@@ -1,0 +1,4 @@
+*.o
+ui*
+qrc_res.cpp
+TimeTracker
