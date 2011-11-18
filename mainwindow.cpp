@@ -143,7 +143,8 @@ void MainWindow::createTrayIcon()
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->setIcon(QIcon(OFF_CLOCK_ICON));
-    trayIcon->setToolTip(isTracking ? TRACKING_ON : TRACKING_OFF);
+    Project *currentProject = getCurrentProject();
+    trayIcon->setToolTip(isTracking ? (currentProject ? currentProject->getName() : TRACKING_ON) : TRACKING_OFF);
 
 }
 
@@ -202,13 +203,17 @@ void MainWindow::makeConnections() {
 
     connect(&screenShotTimer, SIGNAL(timeout()), this, SLOT(shotScreen()));
 
+    // change tray icon tooltip with the new current project
+    connect(prefWidget, SIGNAL(currentProjectChanged(QString)), SLOT(updateTrayIconToolTip(QString)));
+
 }
 
 void MainWindow::startClock()
 {
     isTracking = true;
     trayIcon->setIcon(QIcon(NORMAL_CLOCK_ICON));
-    trayIcon->setToolTip(TRACKING_ON);
+    Project *currentProject = getCurrentProject();
+    trayIcon->setToolTip(currentProject ? currentProject->getName() : TRACKING_ON);
 
     trackBeginning = QDateTime::currentDateTime();
 }
@@ -318,4 +323,9 @@ void MainWindow::shotScreen()
                    ".png";
 
     ScreenShot::saveNewDesktopScreenshot(path);
+}
+
+void MainWindow::updateTrayIconToolTip(QString txt)
+{
+    trayIcon->setToolTip(txt);
 }

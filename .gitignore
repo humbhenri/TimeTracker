@@ -2,3 +2,13 @@
 ui*
 qrc_res.cpp
 TimeTracker
+*.pro.user
+*DS_Store
+TimeTracker.app/
+moc_createprojectdialog.cpp
+moc_mainwindow.cpp
+moc_preferences.cpp
+moc_preferenceswidget.cpp
+moc_project.cpp
+moc_projectwidget.cpp
+moc_screenshot.cpp

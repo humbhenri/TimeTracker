@@ -62,6 +62,7 @@ private slots:
 
 signals:
     void projectAdded();
+    void currentProjectChanged(QString);
     void screenShotEnabled(bool);
 };
 

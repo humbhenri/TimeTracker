@@ -91,6 +91,7 @@ private slots:
     void openPaypalPage();
     void toggleScreenShots(bool);
     void shotScreen();
+    void updateTrayIconToolTip(QString);
 };
 
 #endif // MAINWINDOW_H

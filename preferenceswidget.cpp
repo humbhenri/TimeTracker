@@ -49,6 +49,7 @@ PreferencesWidget::PreferencesWidget(QWidget *parent) :
     connect(newProjectDialog, SIGNAL(accepted()), this, SLOT(addNewProject()));
     connect(ui->projectPushButton, SIGNAL(clicked()), this, SLOT(showProjectDialog()));
     connect(ui->projectsComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(setCurrentProject(QString)));
+    connect(ui->projectsComboBox, SIGNAL(currentIndexChanged(QString)), this, SIGNAL(currentProjectChanged(QString)));
 }
 
 PreferencesWidget::~PreferencesWidget()
