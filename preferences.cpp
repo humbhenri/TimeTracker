@@ -29,10 +29,7 @@ or implied, of Humberto Pinheiro.*/
 #include "project.h"
 #include <QStringList>
 #include <QSettings>
-#include <QDomDocument>
 #include <QDesktopServices>
-#include <QFile>
-#include <QTextStream>
 #include <QDir>
 #include <QApplication>
 
@@ -94,31 +91,6 @@ void Preferences::savePreferences()
     settings.setValue(SINGLE_CLICK, getSingleClickCommandName());
     settings.setValue(DOUBLE_CLICK, getDoubleClickCommandName());
     settings.setValue(CURRENT_PROJECT, getCurrentProject());
-
-    QDir dir(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation) +
-             QString("/") + QApplication::instance()->applicationName() + QString("/"));
-    if (!dir.exists()) {
-        qDebug("Dir %s doesn't exists", dir.path().toAscii().data());
-        if (!dir.mkdir(dir.path()))
-            qDebug("Error: cannot create dir %s", dir.path().toAscii().data());
-    }
-
-#ifndef QT_NO_DEBUG
-    qDebug("Saving projects to file %s", QString(dir.path() + "/" + PROJECTS_XML_FILE).toAscii().data());
-#endif
-
-    QFile file(dir.path() + QString("/") + Preferences::PROJECTS_XML_FILE);
-    if (!file.open(QIODevice::WriteOnly)) {
-        qDebug("Error: can't open project file");
-        return;
-    }
-    QDomDocument doc("TimeTrackerML");
-    QDomElement root = doc.createElement( "timetracker" );
-    doc.appendChild(root);
-    root.appendChild(Project::getAllProjectsAsDomElement(doc));
-    QTextStream ts(&file);
-    ts << doc.toString();
-    file.close();
 }
 
 void Preferences::setSingleClick(const QString &command)
@@ -164,4 +136,17 @@ void Preferences::setCommands(QMap<QString,TrayIconCommand*> *map)
     commands = map;
     singleClick = commands->begin().value();
     doubleClick = commands->begin().value();
+}
+
+QString Preferences::getProjectsXMLFile()
+{
+    QDir dir(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation) +
+             QString("/") + QApplication::instance()->applicationName() + QString("/"));
+    if (!dir.exists()) {
+        qDebug("Dir %s doesn't exists", qPrintable(dir.path()));
+        if (!dir.mkdir(dir.path()))
+            qDebug("Error: cannot create dir %s", qPrintable(dir.path()));
+    }
+
+    return dir.path() + QString("/") + Preferences::PROJECTS_XML_FILE;
 }

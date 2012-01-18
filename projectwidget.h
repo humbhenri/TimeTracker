@@ -50,7 +50,7 @@ private:
     void prepareHistoryTable();    
 
 public slots:
-    void loadProject();
+    void loadProjectDetails();
     void fillProjectComboBox();
     void saveProjectDescription();
 

@@ -83,6 +83,7 @@ MainWindow::~MainWindow()
     if (isTracking)
         stopClock();
     preferences->savePreferences();
+    Project::save();
     delete ui;
     delete trayIcon;
     delete trayIconMenu;
@@ -165,7 +166,7 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 /**
   * Save preferences changes made by the user
   */
-void MainWindow::savePreferences()
+void MainWindow::setPreferences()
 {
     QComboBox *singleClickCombo = ui->centralWidget->findChild<QComboBox*>("traySingleComboBox");
     QComboBox *doubleClickCombo = ui->centralWidget->findChild<QComboBox*>("trayDoubleComboBox");
@@ -186,7 +187,7 @@ void MainWindow::makeConnections() {
     QPushButton *ok = ui->centralWidget->findChild<QPushButton*>("okPushButton");
     QPushButton *cancel = ui->centralWidget->findChild<QPushButton*>("cancelPushButton");
 
-    connect(ok, SIGNAL(clicked()), this, SLOT(savePreferences()));
+    connect(ok, SIGNAL(clicked()), this, SLOT(setPreferences()));
     connect(ok, SIGNAL(clicked()), this, SLOT(hide()));
 
 
@@ -261,7 +262,7 @@ void MainWindow::createNewTimeSession()
         QComboBox *projectCombobox = projWidget->findChild<QComboBox*>("projectComboBox");
         if (projectCombobox &&
             currentProject->getName() == projectCombobox->currentText()){
-            projWidget->loadProject();
+            projWidget->loadProjectDetails();
         }
     }
 }

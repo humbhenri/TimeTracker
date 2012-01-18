@@ -83,7 +83,7 @@ private:
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
-    void savePreferences();
+    void setPreferences();
     inline void doNothing(){}
     void startClock();
     void stopClock();

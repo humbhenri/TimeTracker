@@ -54,6 +54,7 @@ public:
     static QString DOUBLE_CLICK;
     static QString CURRENT_PROJECT;
     static QString PROJECTS_XML_FILE;
+    static QString getProjectsXMLFile();
 
 private:
     QMap<QString, TrayIconCommand*> *commands;

@@ -52,7 +52,7 @@ private:
 
 public slots:
     void loadPreferences();
-    void loadProjects();
+    void fillProjectsCombobox();
     void addNewProject();
     void showProjectDialog();
     void setCurrentProject(const QString &name);

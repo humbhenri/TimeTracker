@@ -45,7 +45,7 @@ ProjectWidget::ProjectWidget(QWidget *parent) :
     prepareHistoryTable();
     fillProjectComboBox();
 
-    connect(ui->projectComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(loadProject()));
+    connect(ui->projectComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(loadProjectDetails()));
     connect(ui->descriptionTextEdit, SIGNAL(textChanged()), this, SLOT(saveProjectDescription()));
 }
 
@@ -64,7 +64,7 @@ void ProjectWidget::prepareHistoryTable()
     ui->historyTableView->setColumnWidth(0, 130);
 }
 
-void ProjectWidget::loadProject()
+void ProjectWidget::loadProjectDetails()
 {
     Project *project = Project::getProjectByName(ui->projectComboBox->currentText());
     if (!project)
@@ -100,7 +100,7 @@ void ProjectWidget::fillProjectComboBox()
         it++;
     }
     ui->projectComboBox->blockSignals(false);
-    loadProject();
+    loadProjectDetails();
 }
 
 void ProjectWidget::saveProjectDescription()

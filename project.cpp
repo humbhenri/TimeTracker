@@ -25,6 +25,10 @@ authors and should not be interpreted as representing official policies, either 
 or implied, of Humberto Pinheiro.*/
 
 #include "project.h"
+#include "preferences.h"
+#include <QFile>
+#include <QTextStream>
+#include <QDomDocument>
 
 QList<Project*> Project::projects;
 
@@ -126,4 +130,26 @@ void Project::createProjectsFromDomElement(const QDomElement &e)
             n = n.nextSibling();
         }
     }
+}
+
+void Project::save()
+{
+    QString fileName = Preferences::getProjectsXMLFile();
+
+#ifndef QT_NO_DEBUG
+    qDebug("Saving projects to file %s", qPrintable(fileName));
+#endif
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly)) {
+        qDebug("Error: can't open project file");
+        return;
+    }
+    QDomDocument doc("TimeTrackerML");
+    QDomElement root = doc.createElement( "timetracker" );
+    doc.appendChild(root);
+    root.appendChild(Project::getAllProjectsAsDomElement(doc));
+    QTextStream ts(&file);
+    ts << doc.toString();
+    file.close();
 }

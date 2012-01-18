@@ -48,6 +48,7 @@ public:
     static Project* getProjectByName(const QString & name);
     static QDomElement getAllProjectsAsDomElement(QDomDocument &d);
     static void createProjectsFromDomElement(const QDomElement &d);
+    static void save();
 
 signals:
     void changed();

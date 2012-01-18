@@ -77,10 +77,10 @@ void PreferencesWidget::loadPreferences()
         ui->traySingleComboBox->setCurrentIndex(preferences->commandNames().indexOf(singleClickCommand));
         ui->trayDoubleComboBox->setCurrentIndex(preferences->commandNames().indexOf(doubleClickCommand));        
     }
-    loadProjects();
+    fillProjectsCombobox();
 }
 
-void PreferencesWidget::loadProjects()
+void PreferencesWidget::fillProjectsCombobox()
 {
     ui->projectsComboBox->blockSignals(true);
     ui->projectsComboBox->clear();
@@ -99,7 +99,7 @@ void PreferencesWidget::addNewProject()
     QString name = newProjectDialog->getName();
     QString description = newProjectDialog->getDescription();
     Project *project = Project::makeProject(name, description);
-    loadProjects();
+    fillProjectsCombobox();
     setCurrentProject(project->getName());
 
     emit projectAdded();
