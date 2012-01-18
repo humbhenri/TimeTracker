@@ -5,7 +5,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml
+QT       += core gui xml sql
 
 TARGET = TimeTracker
 TEMPLATE = app
@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     project.cpp \
     timespan.cpp \
     createprojectdialog.cpp \
-    screenshot.cpp
+    screenshot.cpp \
+    genericdao.cpp
 
 HEADERS  += mainwindow.h \
     preferenceswidget.h \
@@ -29,7 +30,8 @@ HEADERS  += mainwindow.h \
     project.h \
     timespan.h \
     createprojectdialog.h \
-    screenshot.h
+    screenshot.h \
+    genericdao.h
 
 FORMS += mainwindow.ui \
     preferenceswidget.ui \
@@ -45,3 +47,5 @@ win32 {
 macx-g++{
     ICON = images/timetracker.icns
 }
+
+

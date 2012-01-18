@@ -34,9 +34,13 @@ or implied, of Humberto Pinheiro.*/
   * Measure a time span between 2 QDateTime's.
   * A project consist of a collection of TimeSpan's
   */
-class TimeSpan
+class TimeSpan : public QObject
 {
+    Q_OBJECT
+    Q_PROPERTY(QDateTime start READ getStart WRITE setStart)
+    Q_PROPERTY(QDateTime end READ getEnd WRITE setEnd)
 public:
+    TimeSpan(){}
     TimeSpan(const TimeSpan & other);
     TimeSpan(const QDateTime&, const QDateTime&);
     QString toString() const;
@@ -52,9 +56,12 @@ public:
     static int MinutesPerHour;
     static QString DateFormat;
     TimeSpan& operator=(const TimeSpan & other);
-    inline QDateTime beginning() const { return start; }
+    inline QDateTime getStart() const { return start; }
+    inline QDateTime getEnd() const { return end; }
+    inline void setStart(QDateTime other) { start = other; }
+    inline void setEnd(QDateTime other) { end = other; }
     QDomElement toNode(QDomDocument &d);
-    static TimeSpan fromNode(const QDomElement & e);
+    static TimeSpan fromNode(const QDomElement & e);    
 
 private:
     QDateTime end;
