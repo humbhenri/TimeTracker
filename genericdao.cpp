@@ -4,6 +4,7 @@
 #include <QStringList>
 #include <QtSql/QSqlQuery>
 #include <QSqlError>
+#include <QDebug>
 
 namespace DBUtils {
 
@@ -24,7 +25,6 @@ bool GenericDao::insert(QObject *dto, QString tableName)
         names << property.name();
         values << dto->property(property.name());
     }
-    // remove objectName property
     names.removeOne("objectName");
     values.removeOne(dto->property("objectName"));
 
@@ -64,28 +64,37 @@ bool GenericDao::update(QObject *dto, QString tableName)
         names << property.name();
         values << dto->property(property.name());
     }
-    // remove objectName property
-    names.removeFirst();
-    values.removeFirst();
+    names.removeOne("objectName");
+    values.removeOne(dto->property("objectName"));;
 
-    int valuesCount = values.count();
-
-    QSqlQuery query;
-    QString sql = QString("UPDATE ? SET ");
     QStringList sets;
-    for( int i=0; i < valuesCount; i++ ) sets << QString("?=?");
-    sql.append(sets.join(",")).append(" WHERE id = ?");
-    query.prepare(sql);
-    query.addBindValue(tableName);
-    for ( int i=0; i < valuesCount; i++) {
+    for( int i=0; i < values.count(); i++ ) {
+//        sets << QString(" :column") + QString::number(i) + " = :param" + QString::number(i);
+        sets << " ? = ? ";
+    }
+    QSqlQuery query(QSqlDatabase::database());
+//    query.prepare("UPDATE :tableName SET " + sets.join(",") + " WHERE id = :id ");
+    query.prepare("update "+ tableName +" set " + sets.join(",") + " where id = " + dto->property("id").toString());
+    qDebug() << query.lastError().text();
+//    query.bindValue(":tableName", tableName);
+//    query.addBindValue(tableName);
+    for ( int i=0; i < values.count(); i++) {
+//        query.bindValue(":column" + QString::number(i), names.at(i));
+//        query.bindValue(":param" + QString::number(i), values.at(i));
         query.addBindValue(names.at(i));
         query.addBindValue(values.at(i));
     }
-    query.addBindValue(dto->property("id"));
-    bool ok = query.exec();
-    qDebug(qPrintable(query.lastError().text()));
-    qDebug(qPrintable(query.executedQuery()));
-    qDebug("%d", values.count());
+//    query.bindValue(":id", dto->property("id"));
+//    query.addBindValue(dto->property("id"));
+
+        bool ok = query.exec();
+
+    qDebug() << "Bound Values: " << query.boundValues();
+
+    qDebug() << query.lastQuery();
+
+    qDebug() << query.lastError().text();
+
     return ok;
 }
 
