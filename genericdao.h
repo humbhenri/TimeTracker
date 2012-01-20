@@ -2,6 +2,7 @@
 #define GENERICDAO_H
 
 #include <QObject>
+#include <QVector>
 
 namespace DBUtils {
 
@@ -13,7 +14,7 @@ public:
     bool insert(QObject *dto, QString tableName);
     bool remove(QObject *dto, QString tableName);
     bool update(QObject *dto, QString tableName);
-
+    QObject* findById(int id, QString tablename);
 signals:
 
 public slots:

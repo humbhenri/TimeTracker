@@ -12,3 +12,4 @@ moc_preferenceswidget.cpp
 moc_project.cpp
 moc_projectwidget.cpp
 moc_screenshot.cpp
+TimeTracker.pro*

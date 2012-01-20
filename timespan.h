@@ -56,12 +56,13 @@ public:
     static int MinutesPerHour;
     static QString DateFormat;
     TimeSpan& operator=(const TimeSpan & other);
+    bool operator ==(const TimeSpan & other);
     inline QDateTime getStart() const { return start; }
     inline QDateTime getEnd() const { return end; }
     inline void setStart(QDateTime other) { start = other; }
     inline void setEnd(QDateTime other) { end = other; }
     QDomElement toNode(QDomDocument &d);
-    static TimeSpan fromNode(const QDomElement & e);    
+    static TimeSpan fromNode(const QDomElement & e);
 
 private:
     QDateTime end;

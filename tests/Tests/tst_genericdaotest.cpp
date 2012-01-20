@@ -24,6 +24,7 @@ private Q_SLOTS:
     void cleanupTestCase();
     void testDBCreation();
     void testInsert();
+    void testFindById();
     void testUpdate();
     void testDelete();
 };
@@ -40,7 +41,8 @@ void GenericDaoTest::initTestCase()
     path = QDir::toNativeSeparators(path);
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(path);
-    db.open();    
+    db.open();
+    QSqlQuery query("create table timespan(id integer primary key, start text, end text)");
 }
 
 void GenericDaoTest::cleanupTestCase()
@@ -50,7 +52,7 @@ void GenericDaoTest::cleanupTestCase()
     QString path(QDir::homePath());
     path.append(QDir::separator()).append(DB_NAME);
     path = QDir::toNativeSeparators(path);
-//    QFile::remove(path);
+    QFile::remove(path);
 }
 
 void GenericDaoTest::testDBCreation()
@@ -61,13 +63,23 @@ void GenericDaoTest::testDBCreation()
 void GenericDaoTest::testInsert()
 {
     DBUtils::GenericDao dao;
-    QVERIFY(dao.insert(&ts, "timespan"));
+    QVERIFY(dao.insert(&ts, "timespan"));    
 }
+
+
+void GenericDaoTest::testFindById()
+{
+    DBUtils::GenericDao dao;
+    QObject * o = dao.findById(1, "timespan");
+    TimeSpan * timeSpan = dynamic_cast<TimeSpan*>(o);
+    QVERIFY(*timeSpan == ts);
+}
+
 
 void GenericDaoTest::testDelete()
 {
     DBUtils::GenericDao dao;
-//    QVERIFY(dao.remove(&ts, "timespan"));
+    QVERIFY(dao.remove(&ts, "timespan"));
 }
 
 void GenericDaoTest::testUpdate()

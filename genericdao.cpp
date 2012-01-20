@@ -2,8 +2,9 @@
 #include <QMetaObject>
 #include <QMetaProperty>
 #include <QStringList>
-#include <QtSql/QSqlQuery>
+#include <QSqlQuery>
 #include <QSqlError>
+#include <QSqlRecord>
 #include <QDebug>
 
 namespace DBUtils {
@@ -39,7 +40,7 @@ bool GenericDao::insert(QObject *dto, QString tableName)
         query.addBindValue(value);
     bool ok = query.exec();
     if (ok)
-        dto->setProperty("id", query.lastInsertId());
+        dto->setProperty("id", query.lastInsertId());    
     return ok;
 }
 
@@ -67,35 +68,44 @@ bool GenericDao::update(QObject *dto, QString tableName)
     names.removeOne("objectName");
     values.removeOne(dto->property("objectName"));;
 
+    QString sql("UPDATE " + tableName + " SET ");
     QStringList sets;
-    for( int i=0; i < values.count(); i++ ) {
-//        sets << QString(" :column") + QString::number(i) + " = :param" + QString::number(i);
-        sets << " ? = ? ";
+    for ( int i=0; i<values.count(); i++ ) {
+        sets << names.at(i) + " = ?";
     }
+    sql += sets.join(",") + " WHERE id = " + dto->property("id").toString();
     QSqlQuery query(QSqlDatabase::database());
-//    query.prepare("UPDATE :tableName SET " + sets.join(",") + " WHERE id = :id ");
-    query.prepare("update "+ tableName +" set " + sets.join(",") + " where id = " + dto->property("id").toString());
-    qDebug() << query.lastError().text();
-//    query.bindValue(":tableName", tableName);
-//    query.addBindValue(tableName);
-    for ( int i=0; i < values.count(); i++) {
-//        query.bindValue(":column" + QString::number(i), names.at(i));
-//        query.bindValue(":param" + QString::number(i), values.at(i));
-        query.addBindValue(names.at(i));
+    query.prepare(sql);
+    for ( int i=0; i<values.count(); i++ ) {
         query.addBindValue(values.at(i));
     }
-//    query.bindValue(":id", dto->property("id"));
-//    query.addBindValue(dto->property("id"));
-
-        bool ok = query.exec();
-
-    qDebug() << "Bound Values: " << query.boundValues();
-
-    qDebug() << query.lastQuery();
-
-    qDebug() << query.lastError().text();
-
+    bool ok = query.exec();
     return ok;
+
 }
+
+
+QObject * GenericDao::findById(int id, QString tableName)
+{
+    QObject * obj = new QObject();
+    QSqlQuery query(QSqlDatabase::database());
+    query.prepare("SELECT * FROM " + tableName + " WHERE id = ? ");
+    query.addBindValue(QVariant(id));
+    bool ok = query.exec();
+    if ( ok ) {
+        while ( query.next() ) {
+            QSqlRecord rec = query.record();
+            for ( int i=0; i<rec.count(); i++ ) {
+                QString field = rec.fieldName(i);
+                obj->setProperty(qPrintable(field), rec.value(field));
+            }
+        }
+        return obj;
+    }
+    else {
+        return 0;
+    }
+}
+
 
 }

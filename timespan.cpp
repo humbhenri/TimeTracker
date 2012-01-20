@@ -140,3 +140,9 @@ TimeSpan TimeSpan::fromNode(const QDomElement &e)
     }
     return TimeSpan(QDateTime::currentDateTime(), QDateTime::currentDateTime());
 }
+
+bool TimeSpan::operator ==(const TimeSpan &other)
+{
+    return this->start == other.start &&
+            this->end == other.end;
+}
