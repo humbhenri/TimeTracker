@@ -25,6 +25,8 @@ authors and should not be interpreted as representing official policies, either 
 or implied, of Humberto Pinheiro.*/
 
 #include "timespan.h"
+#include "debugutils.h"
+#include <QVariant>
 
 int TimeSpan::SecondsPerMinute = 60;
 int TimeSpan::SecondsPerHour = 3600;
@@ -65,6 +67,13 @@ TimeSpan::TimeSpan(const TimeSpan &other)
 {
     end = other.end;
     start = other.start;
+}
+
+TimeSpan::TimeSpan(const QObject &obj)
+{
+    end = obj.property("end").toDateTime();
+    start = obj.property("start").toDateTime();
+    setProperty("id", obj.property("id"));
 }
 
 QString TimeSpan::toString() const
@@ -143,6 +152,8 @@ TimeSpan TimeSpan::fromNode(const QDomElement &e)
 
 bool TimeSpan::operator ==(const TimeSpan &other)
 {
+    qDebug(qPrintable(DebugUtils::toString(this)));
+    qDebug(qPrintable(DebugUtils::toString(&other)));
     return this->start == other.start &&
             this->end == other.end;
 }

@@ -43,6 +43,7 @@ public:
     TimeSpan(){}
     TimeSpan(const TimeSpan & other);
     TimeSpan(const QDateTime&, const QDateTime&);
+    TimeSpan(const QObject& obj);
     QString toString() const;
     static QString toString(int totalSeconds);
     int seconds() const;

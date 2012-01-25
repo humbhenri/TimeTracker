@@ -60,19 +60,17 @@ void GenericDaoTest::testDBCreation()
     QVERIFY(QSqlError::NoError == QSqlDatabase::database().lastError().type());
 }
 
-void GenericDaoTest::testInsert()
-{
-    DBUtils::GenericDao dao;
-    QVERIFY(dao.insert(&ts, "timespan"));    
-}
-
-
 void GenericDaoTest::testFindById()
 {
     DBUtils::GenericDao dao;
     QObject * o = dao.findById(1, "timespan");
-    TimeSpan * timeSpan = dynamic_cast<TimeSpan*>(o);
-    QVERIFY(*timeSpan == ts);
+    if ( !o )
+        QVERIFY(1 == 0);
+    else {
+        TimeSpan ts2(*o);
+        QVERIFY(ts2 == ts);
+        delete o;
+    }
 }
 
 
@@ -88,6 +86,14 @@ void GenericDaoTest::testUpdate()
     ts.setStart(QDateTime::currentDateTime());
     QVERIFY(dao.update(&ts, "timespan"));
 }
+
+void GenericDaoTest::testInsert()
+{
+    DBUtils::GenericDao dao;
+    QVERIFY(dao.insert(&ts, "timespan"));
+}
+
+
 
 QTEST_APPLESS_MAIN(GenericDaoTest);
 
