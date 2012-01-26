@@ -120,6 +120,8 @@ QVector<QObject*> GenericDao::select(const QMetaObject *metaObject,QString where
         while ( query.next() ) {
             QSqlRecord rec = query.record();
             QObject *obj = metaObject->newInstance();
+            if ( !obj )
+                continue;
             for ( int i=0; i<rec.count(); i++ ) {
                 QString field = rec.fieldName(i);
                 obj->setProperty(qPrintable(field), rec.value(field));
