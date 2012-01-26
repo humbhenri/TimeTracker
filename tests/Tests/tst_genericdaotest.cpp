@@ -25,6 +25,7 @@ private Q_SLOTS:
     void testDBCreation();
     void testInsert();
     void testFindById();
+    void testSelect();
     void testUpdate();
     void testDelete();
 };
@@ -63,14 +64,28 @@ void GenericDaoTest::testDBCreation()
 void GenericDaoTest::testFindById()
 {
     DBUtils::GenericDao dao;
-    QObject * o = dao.findById(1, "timespan");
+    QObject * o = dao.findById(1, ts.metaObject(), "timespan");
     if ( !o )
         QVERIFY(1 == 0);
     else {
-        TimeSpan ts2(*o);
-        QVERIFY(ts2 == ts);
+        TimeSpan *ts2 = dynamic_cast<TimeSpan*>(o);
+        QVERIFY(*ts2 == ts);
         delete o;
     }
+}
+
+
+void GenericDaoTest::testSelect()
+{
+    DBUtils::GenericDao dao;
+    QVector<QObject*> rs = dao.select(ts.metaObject(), "", "timespan");
+    QVERIFY(rs.count() > 0);
+    foreach (QObject* o , rs) {
+        TimeSpan *ts2 = dynamic_cast<TimeSpan*>(o);
+        QVERIFY(ts2 != 0);
+    }
+
+    rs.clear();
 }
 
 

@@ -61,12 +61,14 @@ TimeSpan::TimeSpan(const QDateTime& date1, const QDateTime& date2)
         end = date1;
         start = date2;
     }
+    discardMilliseconds();
 }
 
 TimeSpan::TimeSpan(const TimeSpan &other)
 {
     end = other.end;
     start = other.start;
+    discardMilliseconds();
 }
 
 TimeSpan::TimeSpan(const QObject &obj)
@@ -74,6 +76,7 @@ TimeSpan::TimeSpan(const QObject &obj)
     end = obj.property("end").toDateTime();
     start = obj.property("start").toDateTime();
     setProperty("id", obj.property("id"));
+    discardMilliseconds();
 }
 
 QString TimeSpan::toString() const
@@ -130,6 +133,7 @@ TimeSpan& TimeSpan::operator =(const TimeSpan & other)
 {
     end = other.end;
     start = other.start;
+    discardMilliseconds();
     return *this;
 }
 
@@ -152,8 +156,12 @@ TimeSpan TimeSpan::fromNode(const QDomElement &e)
 
 bool TimeSpan::operator ==(const TimeSpan &other)
 {
-    qDebug(qPrintable(DebugUtils::toString(this)));
-    qDebug(qPrintable(DebugUtils::toString(&other)));
     return this->start == other.start &&
             this->end == other.end;
+}
+
+void TimeSpan::discardMilliseconds()
+{
+    start = start.addMSecs(-start.time().msec());
+    end = end.addMSecs(-end.time().msec());
 }

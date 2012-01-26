@@ -85,9 +85,11 @@ bool GenericDao::update(QObject *dto, QString tableName)
 }
 
 
-QObject * GenericDao::findById(int id, QString tableName)
+QObject * GenericDao::findById(int id, const QMetaObject *metaObject, QString tableName)
 {
-    QObject * obj = new QObject();
+    QObject * obj = metaObject->newInstance();
+    if ( !obj )
+        return obj;
     QSqlQuery query(QSqlDatabase::database());
     query.prepare("SELECT * FROM " + tableName + " WHERE id = ? ");
     query.addBindValue(QVariant(id));
@@ -105,6 +107,27 @@ QObject * GenericDao::findById(int id, QString tableName)
     else {
         return 0;
     }
+}
+
+
+QVector<QObject*> GenericDao::select(const QMetaObject *metaObject,QString where, QString tableName)
+{
+    QVector<QObject*> results;
+    QSqlQuery query(QSqlDatabase::database());
+    query.prepare("SELECT * FROM " + tableName + " WHERE " + (where.isEmpty()?"1=1":where));
+    bool ok = query.exec();
+    if ( ok ) {
+        while ( query.next() ) {
+            QSqlRecord rec = query.record();
+            QObject *obj = metaObject->newInstance();
+            for ( int i=0; i<rec.count(); i++ ) {
+                QString field = rec.fieldName(i);
+                obj->setProperty(qPrintable(field), rec.value(field));
+            }
+            results << obj;
+        }
+    }
+    return results;
 }
 
 

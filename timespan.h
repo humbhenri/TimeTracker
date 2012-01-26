@@ -40,7 +40,7 @@ class TimeSpan : public QObject
     Q_PROPERTY(QDateTime start READ getStart WRITE setStart)
     Q_PROPERTY(QDateTime end READ getEnd WRITE setEnd)
 public:
-    TimeSpan(){}
+    Q_INVOKABLE TimeSpan(){}
     TimeSpan(const TimeSpan & other);
     TimeSpan(const QDateTime&, const QDateTime&);
     TimeSpan(const QObject& obj);
@@ -68,6 +68,7 @@ public:
 private:
     QDateTime end;
     QDateTime start;
+    void discardMilliseconds();
 };
 
 #endif // TIMESPAN_H

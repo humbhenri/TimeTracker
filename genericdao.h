@@ -2,6 +2,7 @@
 #define GENERICDAO_H
 
 #include <QObject>
+#include <QMetaObject>
 #include <QVector>
 
 namespace DBUtils {
@@ -14,7 +15,8 @@ public:
     bool insert(QObject *dto, QString tableName);
     bool remove(QObject *dto, QString tableName);
     bool update(QObject *dto, QString tableName);
-    QObject* findById(int id, QString tablename);
+    QObject* findById(int id, const QMetaObject *metaObject, QString tableName);
+    QVector<QObject*> select(const QMetaObject *metaObject, QString where, QString tableName);
 signals:
 
 public slots:
