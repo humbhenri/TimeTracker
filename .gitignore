@@ -1,3 +1,14 @@
+/tests/Tests-build-desktop-Qt_4_7_4_for_Desktop_-_MinGW_4_4__Qt_SDK__Debug/debug/tst_genericdaotest.moc
+/tests/Tests-build-desktop-Qt_4_7_4_for_Desktop_-_MinGW_4_4__Qt_SDK__Debug/debug/tst_genericdaotest.exe
+/tests/Tests-build-desktop-Qt_4_7_4_for_Desktop_-_MinGW_4_4__Qt_SDK__Debug/debug/moc_genericdao.cpp
+/tests/Tests-build-desktop-Qt_4_7_4_for_Desktop_-_MinGW_4_4__Qt_SDK__Debug/Makefile.Release
+/tests/Tests-build-desktop-Qt_4_7_4_for_Desktop_-_MinGW_4_4__Qt_SDK__Debug/debug/moc_timespan.cpp
+/tests/Tests-build-desktop-Qt_4_7_4_for_Desktop_-_MinGW_4_4__Qt_SDK__Debug/debug/moc_debugutils.cpp
+/tests/Tests-build-desktop-Qt_4_7_4_for_Desktop_-_MinGW_4_4__Qt_SDK__Debug/Makefile.Debug
+/debug/TimeTracker.exe
+/debug/moc_genericdao.cpp
+/debug/moc_timespan.cpp
+/tests/Tests-build-desktop-Qt_4_7_4_for_Desktop_-_MinGW_4_4__Qt_SDK__Debug/Makefile
 *.o
 ui*
 qrc_res.cpp
