@@ -35,7 +35,10 @@ or implied, of Humberto Pinheiro.*/
 class Project : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString name READ getName WRITE setName)
+    Q_PROPERTY(QString description READ getDescription WRITE setDescription)
 public:    
+    Q_INVOKABLE Project(QObject *parent = 0);
     inline void setName(const QString & newName) { name = newName.trimmed(); emit changed();}
     inline QString getName() const { return name; }
     inline void setDescription(const QString & newDescription) { description = newDescription.trimmed(); emit changed();}
@@ -48,15 +51,13 @@ public:
     static Project* getProjectByName(const QString & name);
     static QDomElement getAllProjectsAsDomElement(QDomDocument &d);
     static void createProjectsFromDomElement(const QDomElement &d);
-    static void save();
-
+    static void save(QString fileName);
 signals:
     void changed();
 
 public slots:
 
-private:
-    Project(QObject *parent = 0);
+private:    
     QString name;
     QString description;
     QList<TimeSpan> timeSpans;

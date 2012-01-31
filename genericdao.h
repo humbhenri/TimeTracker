@@ -13,6 +13,7 @@ class GenericDao : public QObject
 public:
     explicit GenericDao(QObject *parent = 0);
     bool insert(QObject *dto, QString tableName);
+    bool insert(QObject *dto, QString tableName, QString fkName, QVariant fkValue);
     bool remove(QObject *dto, QString tableName);
     bool update(QObject *dto, QString tableName);
     QObject* findById(int id, const QMetaObject *metaObject, QString tableName);

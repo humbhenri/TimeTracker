@@ -25,7 +25,6 @@ authors and should not be interpreted as representing official policies, either 
 or implied, of Humberto Pinheiro.*/
 
 #include "project.h"
-#include "preferences.h"
 #include <QFile>
 #include <QTextStream>
 #include <QDomDocument>
@@ -41,12 +40,6 @@ void Project::addTimeTrackingSession(const TimeSpan &timeSpan)
 {
     timeSpans.push_back(timeSpan);
     emit changed();
-
-#ifndef QT_NO_DEBUG
-    qDebug("Project::addTimeTrackingSession called with project.name = %s and time span = %s",
-           name.toAscii().data(),
-           timeSpan.toString().toAscii().data());
-#endif
 }
 
 QString Project::totalTimeSpent() const
@@ -132,9 +125,8 @@ void Project::createProjectsFromDomElement(const QDomElement &e)
     }
 }
 
-void Project::save()
+void Project::save(QString fileName)
 {
-    QString fileName = Preferences::getProjectsXMLFile();
 
 #ifndef QT_NO_DEBUG
     qDebug("Saving projects to file %s", qPrintable(fileName));

@@ -17,11 +17,17 @@ TEMPLATE = app
 INCLUDEPATH += "../.."
 HEADERS = ../../timespan.h \
     ../../genericdao.h \
-    ../../debugutils.h
+    ../../debugutils.h \
+    ../../project.h
 
 SOURCES = tst_genericdaotest.cpp \
     ../../timespan.cpp \
     ../../genericdao.cpp \
-    ../../debugutils.cpp
+    ../../debugutils.cpp \
+    ../../project.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
+
+
+
+
 

@@ -83,7 +83,7 @@ MainWindow::~MainWindow()
     if (isTracking)
         stopClock();
     preferences->savePreferences();
-    Project::save();
+    Project::save(preferences->getProjectsXMLFile());
     delete ui;
     delete trayIcon;
     delete trayIconMenu;
