@@ -24,19 +24,11 @@ The views and conclusions contained in the software and documentation are those 
 authors and should not be interpreted as representing official policies, either expressed
 or implied, of Humberto Pinheiro.*/
 
-#include <QtGui/QApplication>
-#include "mainwindow.h"
+#include "timetrackerapp.h"
 
-#define ORG_NAME "HumbertoApps"
-#define APP_NAME "TimeTracker"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    a.setOrganizationName(ORG_NAME);
-    a.setApplicationName(APP_NAME);
-    MainWindow w;
-    w.show();
-
-    return a.exec();
+    TimeTrackerApp app(argc, argv);
+    return app.exec();
 }
