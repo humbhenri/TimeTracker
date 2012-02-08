@@ -157,7 +157,7 @@ QVector<QObject*> GenericDao::select(const QMetaObject *metaObject,QString where
     QVector<QObject*> results;
     QSqlQuery query(QSqlDatabase::database());
     query.prepare("SELECT * FROM " + tableName + " WHERE " + (where.isEmpty()?"1=1":where));
-    bool ok = query.exec();
+    bool ok = query.exec();        
     if ( ok ) {
         while ( query.next() ) {
             QSqlRecord rec = query.record();

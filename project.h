@@ -51,7 +51,9 @@ public:
     static Project* getProjectByName(const QString & name);
     static QDomElement getAllProjectsAsDomElement(QDomDocument &d);
     static void createProjectsFromDomElement(const QDomElement &d);
-    static void save(QString fileName);
+    static bool save();
+    bool saveTimespans();
+    static const QString TableName;
 signals:
     void changed();
 

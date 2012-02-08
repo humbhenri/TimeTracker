@@ -25,15 +25,19 @@ authors and should not be interpreted as representing official policies, either 
 or implied, of Humberto Pinheiro.*/
 
 #include "project.h"
-#include <QFile>
+#include "genericdao.h"
 #include <QTextStream>
 #include <QDomDocument>
+#include <QVariant>
 
 QList<Project*> Project::projects;
+
+const QString Project::TableName = "project";
 
 Project::Project(QObject *parent) :
     QObject(parent)
 {
+    Project::projects.push_back(this);
 }
 
 void Project::addTimeTrackingSession(const TimeSpan &timeSpan)
@@ -125,23 +129,25 @@ void Project::createProjectsFromDomElement(const QDomElement &e)
     }
 }
 
-void Project::save(QString fileName)
-{
-
-#ifndef QT_NO_DEBUG
-    qDebug("Saving projects to file %s", qPrintable(fileName));
-#endif
-
-    QFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly)) {
-        qDebug("Error: can't open project file");
-        return;
+bool Project::save()
+{    
+    bool ok = true;
+    DBUtils::GenericDao dao;
+    foreach (Project* p, Project::projects) {
+        int id = p->property("id").toInt();
+        if (id == 0)
+            ok &= dao.insert(p, Project::TableName);
+        else
+            ok &= dao.update(p, Project::TableName);
+        return ok && p->saveTimespans();
     }
-    QDomDocument doc("TimeTrackerML");
-    QDomElement root = doc.createElement( "timetracker" );
-    doc.appendChild(root);
-    root.appendChild(Project::getAllProjectsAsDomElement(doc));
-    QTextStream ts(&file);
-    ts << doc.toString();
-    file.close();
+}
+
+bool Project::saveTimespans()
+{
+    bool ok = true;
+    foreach (TimeSpan ts, getTimeSpans()) {
+        ok &= ts.save(property("id"));
+    }
+    return ok;
 }

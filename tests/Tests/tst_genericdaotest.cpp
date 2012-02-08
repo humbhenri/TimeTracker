@@ -30,9 +30,11 @@ private Q_SLOTS:
     void cleanupTestCase();
     void testDBCreation();
     void testInsert();
+    void testProjectSave();
+    void testRestoreProject();
     void testFindById();
     void testSelect();
-    void testUpdate();
+    void testUpdate();    
     void testDelete();
 };
 
@@ -110,7 +112,6 @@ void GenericDaoTest::testSelect()
     DBUtils::GenericDao dao;
     QVector<QObject*> rs = dao.select(ts.metaObject(), "", TIMESPAN_TABLE);
     QVERIFY(rs.count() > 0);
-    qDebug() << rs.count();
     foreach (QObject* o , rs) {
         TimeSpan *ts2 = dynamic_cast<TimeSpan*>(o);
         QVERIFY(ts2 != 0);
@@ -136,6 +137,27 @@ void GenericDaoTest::testUpdate()
     QVERIFY(dao.update(&ts, TIMESPAN_TABLE));
 }
 
+void GenericDaoTest::testRestoreProject()
+{
+    DBUtils::GenericDao dao;
+    Project * project = dynamic_cast<Project*>(dao.findById(p.property("id").toInt(), p.metaObject(), Project::TableName));
+    QVector<QObject*> timespans = dao.select(ts.metaObject(), "projectId = " + project->property("id").toString(), TimeSpan::TableName);
+    QVERIFY(project != 0);
+    QVERIFY(timespans.count() > 0);
+    delete project;
+    timespans.clear();
+}
+
+void GenericDaoTest::testProjectSave()
+{
+    QVERIFY(Project::save());
+    DBUtils::GenericDao dao;
+    QVector<QObject*> timespans = dao.select(ts.metaObject(), "projectId = " + p.property("id").toString(), TimeSpan::TableName);
+    QVERIFY(timespans.count() == p.getTimeSpans().count());
+}
+
+
 QTEST_APPLESS_MAIN(GenericDaoTest);
+
 
 #include "tst_genericdaotest.moc"

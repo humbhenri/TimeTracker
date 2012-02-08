@@ -34,6 +34,7 @@ or implied, of Humberto Pinheiro.*/
 #include <QDesktopServices>
 #include <QUrl>
 #include <QDir>
+#include <QSqlDatabase>
 #include "preferenceswidget.h"
 #include "preferences.h"
 #include "trayiconcommand.h"
@@ -48,6 +49,7 @@ or implied, of Humberto Pinheiro.*/
 #define TRACKING_OFF "Start"
 #define WINDOW_ICON NORMAL_CLOCK_ICON
 #define PAYPAL_URL "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VXJX2VJMQKLG2"
+#define DBName "timetracker.sqlite"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -76,6 +78,8 @@ MainWindow::MainWindow(QWidget *parent) :
     trayIcon->show();
 
     trackBeginning = QDateTime::currentDateTime();
+
+    restoreProjects();
 }
 
 MainWindow::~MainWindow()
@@ -83,7 +87,7 @@ MainWindow::~MainWindow()
     if (isTracking)
         stopClock();
     preferences->savePreferences();
-    Project::save(preferences->getProjectsXMLFile());
+    Project::save();
     delete ui;
     delete trayIcon;
     delete trayIconMenu;
@@ -329,4 +333,27 @@ void MainWindow::shotScreen()
 void MainWindow::updateTrayIconToolTip(QString txt)
 {
     trayIcon->setToolTip(txt);
+}
+
+void MainWindow::initDB()
+{
+    QString path(QDir::homePath());
+    path.append(QDir::separator()).append(DBName);
+    path = QDir::toNativeSeparators(path);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(path);
+    db.open();
+    QSqlQuery query("create table project(id integer primary key, name text, description text)");
+    QSqlQuery query2("create table timespan(id integer primary key, start text, end text, projectId integer, FOREIGN KEY(projectId) REFERENCES project(id))");
+}
+
+void MainWindow::closeDB()
+{
+    QSqlDatabase db = QSqlDatabase::database();
+    db.close();
+}
+
+void MainWindow::restoreProjects()
+{
+    // TODO
 }

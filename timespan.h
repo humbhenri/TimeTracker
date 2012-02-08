@@ -50,12 +50,14 @@ public:
     int minutes() const;
     int hours() const;
     int days() const;
-    static int SecondsPerMinute;
-    static int SecondsPerHour;
-    static int SecondsPerDay;
-    static int HoursPerDay;
-    static int MinutesPerHour;
-    static QString DateFormat;
+    static const int SecondsPerMinute = 60;
+    static const int SecondsPerHour = 3600;
+    static const int SecondsPerDay = 86400;
+    static const int HoursPerDay = 24;
+    static const int MinutesPerHour = 60;
+    static const QString TableName;
+    static const QString FkName;
+    static const QString DateFormat;
     TimeSpan& operator=(const TimeSpan & other);
     bool operator ==(const TimeSpan & other);
     inline QDateTime getStart() const { return start; }
@@ -64,7 +66,7 @@ public:
     inline void setEnd(QDateTime other) { end = other; }
     QDomElement toNode(QDomDocument &d);
     static TimeSpan fromNode(const QDomElement & e);
-
+    bool save (QVariant projectId);
 private:
     QDateTime end;
     QDateTime start;

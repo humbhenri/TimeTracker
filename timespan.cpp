@@ -26,14 +26,11 @@ or implied, of Humberto Pinheiro.*/
 
 #include "timespan.h"
 #include "debugutils.h"
+#include "genericdao.h"
 #include <QVariant>
-
-int TimeSpan::SecondsPerMinute = 60;
-int TimeSpan::SecondsPerHour = 3600;
-int TimeSpan::SecondsPerDay = 86400;
-int TimeSpan::HoursPerDay = 24;
-int TimeSpan::MinutesPerHour = 60;
-QString TimeSpan::DateFormat = "MMM dd yyyy hh:mm:ss";
+const QString TimeSpan::DateFormat = "MMM dd yyyy hh:mm:ss";
+const QString TimeSpan::FkName = "projectId";
+const QString TimeSpan::TableName = "timespan";
 
 QString buildTimeRepresentationHelper(int days, int hours, int minutes)
 {
@@ -164,4 +161,14 @@ void TimeSpan::discardMilliseconds()
 {
     start = start.addMSecs(-start.time().msec());
     end = end.addMSecs(-end.time().msec());
+}
+
+bool TimeSpan::save(QVariant projectId)
+{
+    DBUtils::GenericDao dao;
+    int id = property("id").toInt();
+    if (id == 0)
+        return dao.insert(this, TableName, FkName, projectId);
+    else
+        return dao.update(this, TableName);
 }
