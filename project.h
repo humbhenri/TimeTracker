@@ -52,6 +52,7 @@ public:
     static QDomElement getAllProjectsAsDomElement(QDomDocument &d);
     static void createProjectsFromDomElement(const QDomElement &d);
     static bool save();
+    static bool restore();
     bool saveTimespans();
     static const QString TableName;
 signals:

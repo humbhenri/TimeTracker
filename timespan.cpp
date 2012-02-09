@@ -165,10 +165,6 @@ void TimeSpan::discardMilliseconds()
 
 bool TimeSpan::save(QVariant projectId)
 {
-    DBUtils::GenericDao dao;
-    int id = property("id").toInt();
-    if (id == 0)
-        return dao.insert(this, TableName, FkName, projectId);
-    else
-        return dao.update(this, TableName);
+    DBUtils::GenericDao dao;    
+    return dao.insertOrUpdate(this, TableName, FkName, projectId);
 }

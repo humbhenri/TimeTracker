@@ -33,8 +33,7 @@ private Q_SLOTS:
     void testProjectSave();
     void testRestoreProject();
     void testFindById();
-    void testSelect();
-    void testUpdate();    
+    void testSelect();   
     void testDelete();
 };
 
@@ -85,10 +84,10 @@ void GenericDaoTest::testDBCreation()
 void GenericDaoTest::testInsert()
 {
     DBUtils::GenericDao dao;
-    QVERIFY(dao.insert(&p, PROJECT_TABLE));
-    QVERIFY(dao.insert(&ts, TIMESPAN_TABLE, "projectId", QVariant(p.property("id"))));
+    QVERIFY(dao.insertOrUpdate(&p, PROJECT_TABLE));
+    QVERIFY(dao.insertOrUpdate(&ts, TIMESPAN_TABLE, "projectId", QVariant(p.property("id"))));
     foreach (TimeSpan ts, tss) {
-        QVERIFY(dao.insert(&ts, TIMESPAN_TABLE, "projectId", QVariant(p.property("id"))));
+        QVERIFY(dao.insertOrUpdate(&ts, TIMESPAN_TABLE, "projectId", QVariant(p.property("id"))));
     }
 }
 
@@ -130,26 +129,21 @@ void GenericDaoTest::testDelete()
     }
 }
 
-void GenericDaoTest::testUpdate()
-{
-    DBUtils::GenericDao dao;
-    ts.setStart(QDateTime::currentDateTime());
-    QVERIFY(dao.update(&ts, TIMESPAN_TABLE));
-}
-
 void GenericDaoTest::testRestoreProject()
 {
-    DBUtils::GenericDao dao;
-    Project * project = dynamic_cast<Project*>(dao.findById(p.property("id").toInt(), p.metaObject(), Project::TableName));
-    QVector<QObject*> timespans = dao.select(ts.metaObject(), "projectId = " + project->property("id").toString(), TimeSpan::TableName);
-    QVERIFY(project != 0);
-    QVERIFY(timespans.count() > 0);
-    delete project;
-    timespans.clear();
+//    DBUtils::GenericDao dao;
+//    Project * project = dynamic_cast<Project*>(dao.findById(p.property("id").toInt(), p.metaObject(), Project::TableName));
+//    QVector<QObject*> timespans = dao.select(ts.metaObject(), "projectId = " + project->property("id").toString(), TimeSpan::TableName);
+//    QVERIFY(project != 0);
+//    QVERIFY(timespans.count() > 0);
+//    delete project;
+//    timespans.clear();
+    QVERIFY(Project::restore());
 }
 
 void GenericDaoTest::testProjectSave()
 {
+    QVERIFY(Project::save());
     QVERIFY(Project::save());
     DBUtils::GenericDao dao;
     QVector<QObject*> timespans = dao.select(ts.metaObject(), "projectId = " + p.property("id").toString(), TimeSpan::TableName);

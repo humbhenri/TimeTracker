@@ -37,7 +37,6 @@ const QString Project::TableName = "project";
 Project::Project(QObject *parent) :
     QObject(parent)
 {
-    Project::projects.push_back(this);
 }
 
 void Project::addTimeTrackingSession(const TimeSpan &timeSpan)
@@ -134,13 +133,11 @@ bool Project::save()
     bool ok = true;
     DBUtils::GenericDao dao;
     foreach (Project* p, Project::projects) {
-        int id = p->property("id").toInt();
-        if (id == 0)
-            ok &= dao.insert(p, Project::TableName);
-        else
-            ok &= dao.update(p, Project::TableName);
-        return ok && p->saveTimespans();
+        int id = p->property("id").toInt();        
+        ok &= dao.insertOrUpdate(p, Project::TableName);
+        ok &= p->saveTimespans();
     }
+    return ok;
 }
 
 bool Project::saveTimespans()
@@ -150,4 +147,25 @@ bool Project::saveTimespans()
         ok &= ts.save(property("id"));
     }
     return ok;
+}
+
+bool Project::restore()
+{
+    DBUtils::GenericDao dao;
+    Project dummy;
+    TimeSpan ts;
+    QVector<QObject*> projects = dao.select(dummy.metaObject(), "", Project::TableName);
+    foreach (QObject* o, projects) {
+        Project *p = dynamic_cast<Project*>(o);
+        Project::projects << p;
+        QVector<QObject*> timespans =
+                dao.select(ts.metaObject(), "projectId = " + p->property("id").toString(), TimeSpan::TableName);
+        foreach (QObject *tsObj, timespans) {
+            TimeSpan timespan(*tsObj);
+            p->addTimeTrackingSession(timespan);
+            delete tsObj;
+        }
+        timespans.clear();
+    }
+    return dao.lastOperationSuccess();
 }

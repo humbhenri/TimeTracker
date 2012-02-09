@@ -35,6 +35,7 @@ or implied, of Humberto Pinheiro.*/
 #include <QUrl>
 #include <QDir>
 #include <QSqlDatabase>
+#include <QSqlQuery>
 #include "preferenceswidget.h"
 #include "preferences.h"
 #include "trayiconcommand.h"
