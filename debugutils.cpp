@@ -10,7 +10,7 @@ DebugUtils::DebugUtils(QObject *parent) :
 
 QString DebugUtils::toString(const QObject *o)
 {
-    QString result("\nDumping object " + o->objectName());
+    QString result("\nDumping object\n");
     if ( !o )
         return result;
     const QMetaObject *meta = o->metaObject();

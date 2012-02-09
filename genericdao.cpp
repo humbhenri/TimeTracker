@@ -1,4 +1,5 @@
 #include "genericdao.h"
+#include "debugutils.h"
 #include <QMetaObject>
 #include <QMetaProperty>
 #include <QStringList>
@@ -26,10 +27,13 @@ bool GenericDao::insertOrUpdate(QObject *dto, QString tableName, QString fkName,
         names << property.name();
         values << dto->property(property.name());
     }
+    foreach (QByteArray dynamicProperty, dto->dynamicPropertyNames()) {
+        names << QString(dynamicProperty);
+        values << dto->property(dynamicProperty.data());
+    }
+
     names.removeOne("objectName");
     values.removeOne(dto->property("objectName"));
-//    names.removeOne("id");
-//    values.removeOne(dto->property("id"));
 
     if (!fkName.isEmpty()) {
         names << fkName;

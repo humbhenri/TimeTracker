@@ -35,13 +35,13 @@ QList<Project*> Project::projects;
 const QString Project::TableName = "project";
 
 Project::Project(QObject *parent) :
-    QObject(parent)
+    QObject(parent), lastModified(QDateTime::currentDateTime()), created(QDateTime::currentDateTime())
 {
 }
 
 void Project::addTimeTrackingSession(const TimeSpan &timeSpan)
 {
-    timeSpans.push_back(timeSpan);
+    timeSpans.push_back(timeSpan);    
     emit changed();
 }
 
@@ -132,8 +132,7 @@ bool Project::save()
 {    
     bool ok = true;
     DBUtils::GenericDao dao;
-    foreach (Project* p, Project::projects) {
-        int id = p->property("id").toInt();        
+    foreach (Project* p, Project::projects) {        
         ok &= dao.insertOrUpdate(p, Project::TableName);
         ok &= p->saveTimespans();
     }
@@ -145,6 +144,9 @@ bool Project::saveTimespans()
     bool ok = true;
     foreach (TimeSpan ts, getTimeSpans()) {
         ok &= ts.save(property("id"));
+    }
+    if (ok) {
+        lastModified = QDateTime::currentDateTime();
     }
     return ok;
 }

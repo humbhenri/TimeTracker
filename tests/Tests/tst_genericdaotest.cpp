@@ -23,18 +23,13 @@ public:
 private:
     TimeSpan ts;
     QVector<TimeSpan> tss;
-    Project p;    
 
 private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
     void testDBCreation();
-    void testInsert();
-    void testProjectSave();
+    void testSaveProject();
     void testRestoreProject();
-    void testFindById();
-    void testSelect();   
-    void testDelete();
 };
 
 GenericDaoTest::GenericDaoTest()
@@ -43,15 +38,12 @@ GenericDaoTest::GenericDaoTest()
 
 void GenericDaoTest::initTestCase()
 {
-    p.setName("Projeto Secreto");
-    p.setDescription("Projeto Ultra Secreto");
     QDateTime now = QDateTime::currentDateTime();
     ts = TimeSpan(QDateTime::currentDateTime(), QDateTime::currentDateTime().addSecs(3000));
     int size = 50;
     tss.reserve(size);
     for ( int i=1; i<=size; i++ ) {
         TimeSpan ts(now, now.addSecs(i*60));
-        p.addTimeTrackingSession(ts);
         tss << ts;
     }
     QString path(QDir::homePath());
@@ -60,7 +52,7 @@ void GenericDaoTest::initTestCase()
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(path);
     db.open();
-    QSqlQuery query("create table project(id integer primary key, name text, description text)");
+    QSqlQuery query("create table project(id integer primary key, name text, description text, created text, lastModified text)");
     QSqlQuery query2("create table timespan(id integer primary key, start text, end text, projectId integer, FOREIGN KEY(projectId) REFERENCES project(id))");
 }
 
@@ -81,54 +73,6 @@ void GenericDaoTest::testDBCreation()
 }
 
 
-void GenericDaoTest::testInsert()
-{
-    DBUtils::GenericDao dao;
-    QVERIFY(dao.insertOrUpdate(&p, PROJECT_TABLE));
-    QVERIFY(dao.insertOrUpdate(&ts, TIMESPAN_TABLE, "projectId", QVariant(p.property("id"))));
-    foreach (TimeSpan ts, tss) {
-        QVERIFY(dao.insertOrUpdate(&ts, TIMESPAN_TABLE, "projectId", QVariant(p.property("id"))));
-    }
-}
-
-
-void GenericDaoTest::testFindById()
-{
-    DBUtils::GenericDao dao;
-    QObject * o = dao.findById(ts.property("id").toInt(), ts.metaObject(), TIMESPAN_TABLE);
-    if ( !o )
-        QVERIFY(false);
-    else {
-        TimeSpan *ts2 = dynamic_cast<TimeSpan*>(o);
-        QVERIFY(*ts2 == ts);
-        delete o;
-    }
-}
-
-
-void GenericDaoTest::testSelect()
-{
-    DBUtils::GenericDao dao;
-    QVector<QObject*> rs = dao.select(ts.metaObject(), "", TIMESPAN_TABLE);
-    QVERIFY(rs.count() > 0);
-    foreach (QObject* o , rs) {
-        TimeSpan *ts2 = dynamic_cast<TimeSpan*>(o);
-        QVERIFY(ts2 != 0);
-    }
-
-    rs.clear();
-}
-
-
-void GenericDaoTest::testDelete()
-{
-    DBUtils::GenericDao dao;
-    QVERIFY(dao.remove(&ts, TIMESPAN_TABLE));
-    foreach (TimeSpan ts, tss) {
-        QVERIFY(dao.remove(&ts, TIMESPAN_TABLE));
-    }
-}
-
 void GenericDaoTest::testRestoreProject()
 {
 //    DBUtils::GenericDao dao;
@@ -141,13 +85,28 @@ void GenericDaoTest::testRestoreProject()
     QVERIFY(Project::restore());
 }
 
-void GenericDaoTest::testProjectSave()
+void GenericDaoTest::testSaveProject()
 {
+    Project::makeProject("project 1", "Project 1 Description");
+    foreach (TimeSpan ts, tss) {
+        Project::getProjectByName("project 1")->addTimeTrackingSession(ts);
+    }
+
+    QVERIFY(Project::save());
+    QVERIFY(Project::save());
+    QVERIFY(Project::save());
     QVERIFY(Project::save());
     QVERIFY(Project::save());
     DBUtils::GenericDao dao;
-    QVector<QObject*> timespans = dao.select(ts.metaObject(), "projectId = " + p.property("id").toString(), TimeSpan::TableName);
-    QVERIFY(timespans.count() == p.getTimeSpans().count());
+    Project dummy;
+    QVector<QObject*> projects = dao.select(dummy.metaObject(), "", Project::TableName);
+    QVERIFY2(projects.count() == Project::getProjects().count(), qPrintable(QString::number(projects.count())));
+    QVector<QObject*> timespans = dao.select(ts.metaObject(),
+                                             "projectId = " + Project::getProjectByName("project 1")->property("id").toString(),
+                                             TimeSpan::TableName);
+    QVERIFY2(timespans.count() == tss.count(), qPrintable(QString::number(timespans.count())));
+    projects.clear();
+    timespans.clear();
 }
 
 

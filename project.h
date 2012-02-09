@@ -30,6 +30,7 @@ or implied, of Humberto Pinheiro.*/
 #include <QObject>
 #include <QList>
 #include <QDomDocument>
+#include <QDateTime>
 #include "timespan.h"
 
 class Project : public QObject
@@ -63,6 +64,8 @@ public slots:
 private:    
     QString name;
     QString description;
+    QDateTime lastModified;
+    QDateTime created;
     QList<TimeSpan> timeSpans;
     static QList<Project*> projects;
 };
