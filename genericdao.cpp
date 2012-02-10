@@ -111,7 +111,7 @@ QVector<QObject*> GenericDao::select(const QMetaObject *metaObject,QString where
         }
     }
 
-    qDebug(qPrintable(query.lastQuery()));
+//    qDebug(qPrintable(query.lastQuery()));
 
     return results;
 }

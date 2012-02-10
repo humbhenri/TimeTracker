@@ -33,6 +33,7 @@ private Q_SLOTS:
     void testSave();
     void testSaveProject();
     void testRestoreProject();
+    void testCopyObject();
 };
 
 GenericDaoTest::GenericDaoTest()
@@ -65,7 +66,7 @@ void GenericDaoTest::cleanupTestCase()
     QString path(QDir::homePath());
     path.append(QDir::separator()).append(DB_NAME);
     path = QDir::toNativeSeparators(path);
-//    QFile::remove(path);
+    QFile::remove(path);
     tss.clear();
 }
 
@@ -87,6 +88,7 @@ void GenericDaoTest::testSaveProject()
         Project::getProjectByName("project 1")->addTimeTrackingSession(ts);
     }
 
+    QVERIFY(Project::save());
     QVERIFY(Project::save());
     QVERIFY(Project::save());
     DBUtils::GenericDao dao;
@@ -112,10 +114,33 @@ void GenericDaoTest::testSave()
     QVERIFY2(ts.save(QVariant()), DEBUG_DB);
     QVERIFY2(ts.save(QVariant()), DEBUG_DB);
     QVERIFY2(ts.save(QVariant()), DEBUG_DB);
+    ts.setEnd(ts.getStart());
     QVERIFY2(ts.save(QVariant()), DEBUG_DB);
     QVector<QObject*> timespans = dao.select(ts.metaObject(), "start = \"" + QVariant(ts.getStart()).toString() + "\"",
                                              TimeSpan::TableName);
     QVERIFY2(QSqlDatabase::database().lastError().type() == QSqlError::NoError, DEBUG_DB);
+    QVERIFY2(timespans.count() == 1, qPrintable(QString::number(timespans.count())));
+    QVERIFY(dao.remove(&ts, TimeSpan::TableName));
+    timespans.clear();
+}
+
+void GenericDaoTest::testCopyObject()
+{
+    DBUtils::GenericDao dao;
+    TimeSpan ts(QDateTime(QDate(2000, 1, 1), QTime(12,0,0)), QDateTime(QDate(2012,12,21), QTime(12,0,0)));
+    ts.save(QVariant());
+    QVector<QObject*> timespans = dao.select(ts.metaObject(), "start = \"" + QVariant(ts.getStart()).toString() + "\"",
+                                             TimeSpan::TableName);
+    QVERIFY(timespans.count() == 1);
+    TimeSpan* ts2 = dynamic_cast<TimeSpan*>(timespans[0]);
+    TimeSpan timespan(*ts2);
+    QVERIFY2(timespan.property("id") == ts2->property("id"), qPrintable(timespan.property("id").toString()));
+    QVERIFY(timespan.getStart() == ts2->getStart());
+    QVERIFY(timespan.getEnd() == ts2->getEnd());
+    ts2->save(QVariant());
+    timespans.clear();
+    timespans = dao.select(ts.metaObject(), "start = \"" + QVariant(timespan.getStart()).toString() + "\"",
+                                             TimeSpan::TableName);
     QVERIFY2(timespans.count() == 1, qPrintable(QString::number(timespans.count())));
 }
 
