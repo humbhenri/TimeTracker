@@ -26,6 +26,7 @@ or implied, of Humberto Pinheiro.*/
 
 #include "project.h"
 #include "genericdao.h"
+#include "debugutils.h"
 #include <QTextStream>
 #include <QDomDocument>
 #include <QVariant>

@@ -16,7 +16,7 @@ GenericDao::GenericDao(QObject *parent) :
 }
 
 bool GenericDao::insertOrUpdate(QObject *dto, QString tableName, QString fkName, QVariant fkValue)
-{
+{    
     const QMetaObject *metaObject = dto->metaObject();
     int count = metaObject->propertyCount();
     QStringList names;
@@ -50,8 +50,10 @@ bool GenericDao::insertOrUpdate(QObject *dto, QString tableName, QString fkName,
     foreach (QVariant value, values)
         query.addBindValue(value);
     bool ok = query.exec();
-    if (ok)
+    if (ok && !dto->property("id").isValid()) {
         dto->setProperty("id", query.lastInsertId());
+    }
+
     return ok;
 }
 
@@ -94,8 +96,7 @@ QVector<QObject*> GenericDao::select(const QMetaObject *metaObject,QString where
 {
     QVector<QObject*> results;
     QSqlQuery query(QSqlDatabase::database());
-    query.prepare("SELECT * FROM " + tableName + " WHERE " + (where.isEmpty()?"1=1":where));
-    bool ok = query.exec();        
+    bool ok = query.exec("SELECT * FROM " + tableName + " WHERE " + (where.isEmpty()?"1=1":where));
     if ( ok ) {
         while ( query.next() ) {
             QSqlRecord rec = query.record();
@@ -109,6 +110,9 @@ QVector<QObject*> GenericDao::select(const QMetaObject *metaObject,QString where
             results << obj;
         }
     }
+
+    qDebug(qPrintable(query.lastQuery()));
+
     return results;
 }
 
@@ -117,5 +121,6 @@ bool GenericDao::lastOperationSuccess()
 {
     return QSqlDatabase::database().lastError().type() == QSqlError::NoError;
 }
+
 
 }

@@ -17,7 +17,7 @@ public:
     bool remove(QObject *dto, QString tableName);
     QObject* findById(int id, const QMetaObject *metaObject, QString tableName);
     QVector<QObject*> select(const QMetaObject *metaObject, QString where, QString tableName);
-    bool lastOperationSuccess();
+    bool lastOperationSuccess();    
 signals:
 
 public slots:

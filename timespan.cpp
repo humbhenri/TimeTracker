@@ -65,6 +65,7 @@ TimeSpan::TimeSpan(const TimeSpan &other)
 {
     end = other.end;
     start = other.start;
+    setProperty("id", other.property("id"));
     discardMilliseconds();
 }
 
@@ -130,6 +131,7 @@ TimeSpan& TimeSpan::operator =(const TimeSpan & other)
 {
     end = other.end;
     start = other.start;
+    setProperty("id", other.property("id"));
     discardMilliseconds();
     return *this;
 }
@@ -166,5 +168,6 @@ void TimeSpan::discardMilliseconds()
 bool TimeSpan::save(QVariant projectId)
 {
     DBUtils::GenericDao dao;    
-    return dao.insertOrUpdate(this, TableName, FkName, projectId);
+    bool ok = dao.insertOrUpdate(this, TableName, FkName, projectId);
+    return ok;
 }
