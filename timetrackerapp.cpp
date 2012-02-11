@@ -12,3 +12,8 @@ TimeTrackerApp::TimeTrackerApp(int & argc, char** argv) :
     mainWindow->show();
 
 }
+
+TimeTrackerApp::~TimeTrackerApp()
+{
+    delete mainWindow;
+}

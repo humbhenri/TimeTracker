@@ -61,27 +61,6 @@ void Preferences::loadPreferences()
     setSingleClick(settings.value(SINGLE_CLICK, QVariant(commands->keys().at(0))).toString());
     setDoubleClick(settings.value(DOUBLE_CLICK, QVariant(commands->keys().at(0))).toString());
     setCurrentProject(settings.value(CURRENT_PROJECT, QVariant(QString::null)).toString());
-
-    QDir dir(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation) +
-             QString("/") + QApplication::instance()->applicationName() + QString("/"));
-    QFile file(dir.path() + QString("/") + Preferences::PROJECTS_XML_FILE);
-    if (!file.open(QIODevice::ReadOnly)) {
-        qDebug("Error: can't open project file");
-        return;
-    }
-    QDomDocument doc("TimeTrackerML");
-    if (!doc.setContent(&file)){
-        qDebug("Error: cant't load QDomDocument from project file");
-    }
-    else {
-        QDomElement root = doc.documentElement();
-        if (root.tagName() == "timetracker") {
-            QDomNode n = root.firstChild();
-            Project::createProjectsFromDomElement(n.toElement());
-        }
-    }
-    file.close();
-
     emit changed();
 }
 

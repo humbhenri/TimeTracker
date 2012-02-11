@@ -123,4 +123,9 @@ bool GenericDao::lastOperationSuccess()
 }
 
 
+QString GenericDao::lastError()
+{
+    return QSqlDatabase::database().lastError().text();
+}
+
 }

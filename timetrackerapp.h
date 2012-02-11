@@ -9,6 +9,7 @@ class TimeTrackerApp : public QApplication
     Q_OBJECT
 public:
     explicit TimeTrackerApp(int & argc, char** argv);
+    virtual ~TimeTrackerApp();
 
 private:
     MainWindow* mainWindow;

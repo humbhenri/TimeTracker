@@ -80,6 +80,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     trackBeginning = QDateTime::currentDateTime();
 
+    initDB();
+
     restoreProjects();
 }
 
@@ -98,6 +100,7 @@ MainWindow::~MainWindow()
     delete minimizeAction;
     delete restoreAction;
     delete quitAction;
+    closeDB();
 }
 
 void MainWindow::setVisible(bool visible)
@@ -344,7 +347,7 @@ void MainWindow::initDB()
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(path);
     db.open();
-    QSqlQuery query("create table project(id integer primary key, name text, description text)");
+    QSqlQuery query("create table project(id integer primary key, name text, description text, created text, lastModified text)");
     QSqlQuery query2("create table timespan(id integer primary key, start text, end text, projectId integer, FOREIGN KEY(projectId) REFERENCES project(id))");
 }
 
@@ -356,5 +359,5 @@ void MainWindow::closeDB()
 
 void MainWindow::restoreProjects()
 {
-    // TODO
+    Project::restore();
 }

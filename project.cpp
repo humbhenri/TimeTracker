@@ -136,6 +136,9 @@ bool Project::save()
     foreach (Project* p, Project::projects) {        
         ok &= dao.insertOrUpdate(p, Project::TableName);
         ok &= p->saveTimespans();
+    }    
+    if (!ok) {
+        qDebug(qPrintable(dao.lastError()));
     }
     return ok;
 }
@@ -149,6 +152,7 @@ bool Project::saveTimespans()
     if (ok) {
         lastModified = QDateTime::currentDateTime();
     }
+
     return ok;
 }
 
