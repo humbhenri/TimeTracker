@@ -24,7 +24,7 @@ public:
     GenericDaoTest();
 
 private:
-    QVector<TimeSpan> tss;
+    QVector<TimeSpan*> tss;
 
 private Q_SLOTS:
     void initTestCase();
@@ -46,8 +46,7 @@ void GenericDaoTest::initTestCase()
     int size = 1;
     tss.reserve(size);
     for ( int i=1; i<=size; i++ ) {
-        TimeSpan ts(now, now.addSecs(i*60));
-        tss << ts;
+        tss << new TimeSpan (now, now.addSecs(i*60));
     }
     QString path(QDir::homePath());
     path.append(QDir::separator()).append(DB_NAME);
@@ -84,13 +83,24 @@ void GenericDaoTest::testRestoreProject()
 void GenericDaoTest::testSaveProject()
 {
     Project::makeProject("project 1", "Project 1 Description");
-    foreach (TimeSpan ts, tss) {
+    foreach (TimeSpan * ts, tss) {
         Project::getProjectByName("project 1")->addTimeTrackingSession(ts);
     }
 
     QVERIFY(Project::save());
+    foreach (TimeSpan * ts, Project::getProjectByName("project 1")->getTimeSpans()) {
+        debugObject(ts);
+    }
+
     QVERIFY(Project::save());
+    foreach (TimeSpan * ts, Project::getProjectByName("project 1")->getTimeSpans()) {
+        debugObject(ts);
+    }
+
     QVERIFY(Project::save());
+    foreach (TimeSpan * ts, Project::getProjectByName("project 1")->getTimeSpans()) {
+        debugObject(ts);
+    }
     DBUtils::GenericDao dao;
     Project dummy;
     TimeSpan ts;

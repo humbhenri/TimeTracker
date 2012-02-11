@@ -73,13 +73,13 @@ void ProjectWidget::loadProjectDetails()
     ui->descriptionTextEdit->setText( project->getDescription());
     ui->timeSpentLabel->setText(project->totalTimeSpent());
 
-    QList<TimeSpan> timeSpans = project->getTimeSpans();
-    QList<TimeSpan>::iterator it = timeSpans.begin();
+    QVector<TimeSpan*> timeSpans = project->getTimeSpans();
+    QVector<TimeSpan*>::iterator it = timeSpans.begin();
     historyModel->removeRows(0, historyModel->rowCount());
     QList<QStandardItem*> items;
     while (it != timeSpans.end()) {
-        QStandardItem *beginning = new QStandardItem((*it).getStart().toString("MMM dd yyyy hh:mm:ss"));
-        QStandardItem *duration = new QStandardItem((*it).toString());
+        QStandardItem *beginning = new QStandardItem((*it)->getStart().toString("MMM dd yyyy hh:mm:ss"));
+        QStandardItem *duration = new QStandardItem((*it)->toString());
         items.append(beginning);
         items.append(duration);
         historyModel->appendRow(items);

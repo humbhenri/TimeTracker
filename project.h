@@ -28,7 +28,7 @@ or implied, of Humberto Pinheiro.*/
 #define PROJECT_H
 
 #include <QObject>
-#include <QList>
+#include <QVector>
 #include <QDomDocument>
 #include <QDateTime>
 #include "timespan.h"
@@ -44,8 +44,8 @@ public:
     inline QString getName() const { return name; }
     inline void setDescription(const QString & newDescription) { description = newDescription.trimmed(); emit changed();}
     inline QString getDescription() const { return description; }
-    void addTimeTrackingSession(const TimeSpan &timeSpan);
-    inline QList<TimeSpan> getTimeSpans() const { return timeSpans; }
+    void addTimeTrackingSession(TimeSpan * timeSpan);
+    inline QVector<TimeSpan*> getTimeSpans() const { return timeSpans; }
     QString totalTimeSpent() const;    
     static Project* makeProject(const QString & name, const QString & description);
     static QList<Project*> getProjects();
@@ -66,7 +66,7 @@ private:
     QString description;
     QDateTime lastModified;
     QDateTime created;
-    QList<TimeSpan> timeSpans;
+    QVector<TimeSpan*> timeSpans;
     static QList<Project*> projects;
 };
 

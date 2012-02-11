@@ -259,7 +259,7 @@ void MainWindow::createCommands()
 void MainWindow::createNewTimeSession()
 {
     QDateTime currentTime = QDateTime::currentDateTime();
-    TimeSpan gap(trackBeginning, currentTime);
+    TimeSpan * gap = new TimeSpan(trackBeginning, currentTime);
     Project *currentProject = getCurrentProject();
     if (currentProject) {
         currentProject->addTimeTrackingSession(gap);

@@ -40,9 +40,9 @@ Project::Project(QObject *parent) :
 {
 }
 
-void Project::addTimeTrackingSession(const TimeSpan &timeSpan)
+void Project::addTimeTrackingSession(TimeSpan * timeSpan)
 {
-    timeSpans.push_back(timeSpan);    
+    timeSpans << timeSpan;
     emit changed();
 }
 
@@ -50,9 +50,9 @@ QString Project::totalTimeSpent() const
 {
     int totalSecs = 0;
 
-    QList<TimeSpan>::const_iterator it = timeSpans.begin();
+    QVector<TimeSpan*>::const_iterator it = timeSpans.begin();
     while (it != timeSpans.end()) {
-        totalSecs += (*it).seconds();
+        totalSecs += (*it)->seconds();
         it++;
     }
 
@@ -94,10 +94,10 @@ QDomElement Project::getAllProjectsAsDomElement(QDomDocument & d)
         QDomElement p = d.createElement("project");
         p.setAttribute("name", (*it)->getName());
         p.setAttribute("description", (*it)->getDescription());
-        QList<TimeSpan> timeSpans = (*it)->getTimeSpans();
-        QList<TimeSpan>::iterator tsIt = timeSpans.begin();
+        QVector<TimeSpan*> timeSpans = (*it)->getTimeSpans();
+        QVector<TimeSpan*>::iterator tsIt = timeSpans.begin();
         for (; tsIt != timeSpans.end(); tsIt++) {
-            p.appendChild((*tsIt).toNode(d));
+            p.appendChild((*tsIt)->toNode(d));
         }
         root.appendChild(p);
     }
@@ -118,8 +118,8 @@ void Project::createProjectsFromDomElement(const QDomElement &e)
                 );
                 QDomNode ts = p.firstChild();
                 while (!ts.isNull()){
-                    TimeSpan timeSpan = TimeSpan::fromNode(ts.toElement());
-                    if (timeSpan.minutes() > 0)
+                    TimeSpan * timeSpan = TimeSpan::fromNode(ts.toElement());
+                    if (timeSpan->minutes() > 0)
                         project->addTimeTrackingSession(timeSpan);
                     ts = ts.nextSibling();
                 }
@@ -143,8 +143,8 @@ bool Project::save()
 bool Project::saveTimespans()
 {
     bool ok = true;
-    foreach (TimeSpan ts, getTimeSpans()) {
-        ok &= ts.save(property("id"));
+    foreach (TimeSpan * ts, getTimeSpans()) {
+        ok &= ts->save(property("id"));
     }
     if (ok) {
         lastModified = QDateTime::currentDateTime();
@@ -164,11 +164,9 @@ bool Project::restore()
         QVector<QObject*> timespans =
                 dao.select(ts.metaObject(), "projectId = " + p->property("id").toString(), TimeSpan::TableName);
         foreach (QObject *tsObj, timespans) {
-            TimeSpan timespan(*tsObj);
-            p->addTimeTrackingSession(timespan);
-            delete tsObj;
-        }
-        timespans.clear();
+            TimeSpan * timespan = dynamic_cast<TimeSpan*>(tsObj);
+            p->addTimeTrackingSession(timespan);            
+        }        
     }
     return dao.lastOperationSuccess();
 }

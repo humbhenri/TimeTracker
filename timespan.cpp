@@ -144,13 +144,13 @@ QDomElement TimeSpan::toNode(QDomDocument & d)
     return node;
 }
 
-TimeSpan TimeSpan::fromNode(const QDomElement &e)
+TimeSpan * TimeSpan::fromNode(const QDomElement &e)
 {
     if (!e.isNull() && e.tagName() == "timeSpan") {
-        return TimeSpan(QDateTime::fromString(e.attribute("start", ""), DateFormat),
+        return new TimeSpan(QDateTime::fromString(e.attribute("start", ""), DateFormat),
                         QDateTime::fromString(e.attribute("end", ""), DateFormat));
     }
-    return TimeSpan(QDateTime::currentDateTime(), QDateTime::currentDateTime());
+    return new TimeSpan(QDateTime::currentDateTime(), QDateTime::currentDateTime());
 }
 
 bool TimeSpan::operator ==(const TimeSpan &other)

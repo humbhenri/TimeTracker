@@ -65,7 +65,7 @@ public:
     inline void setStart(QDateTime other) { start = other; }
     inline void setEnd(QDateTime other) { end = other; }
     QDomElement toNode(QDomDocument &d);
-    static TimeSpan fromNode(const QDomElement & e);
+    static TimeSpan * fromNode(const QDomElement & e);
     bool save (QVariant projectId);
 private:
     QDateTime end;
