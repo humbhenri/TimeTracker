@@ -43,7 +43,7 @@ GenericDaoTest::GenericDaoTest()
 void GenericDaoTest::initTestCase()
 {
     QDateTime now = QDateTime::currentDateTime();
-    int size = 1;
+    int size = 100;
     tss.reserve(size);
     for ( int i=1; i<=size; i++ ) {
         tss << new TimeSpan (now, now.addSecs(i*60));
@@ -88,19 +88,11 @@ void GenericDaoTest::testSaveProject()
     }
 
     QVERIFY(Project::save());
-    foreach (TimeSpan * ts, Project::getProjectByName("project 1")->getTimeSpans()) {
-        debugObject(ts);
-    }
 
     QVERIFY(Project::save());
-    foreach (TimeSpan * ts, Project::getProjectByName("project 1")->getTimeSpans()) {
-        debugObject(ts);
-    }
 
     QVERIFY(Project::save());
-    foreach (TimeSpan * ts, Project::getProjectByName("project 1")->getTimeSpans()) {
-        debugObject(ts);
-    }
+
     DBUtils::GenericDao dao;
     Project dummy;
     TimeSpan ts;
