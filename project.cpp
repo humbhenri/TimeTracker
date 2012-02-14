@@ -104,7 +104,7 @@ Project* Project::getProjectByName(const QString &name)
         if (timespan) p->timeSpans << timespan;
     }
 
-    return 0;
+    return p;
 }
 
 
