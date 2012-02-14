@@ -31,6 +31,7 @@ or implied, of Humberto Pinheiro.*/
 #include <QVector>
 #include <QDomDocument>
 #include <QDateTime>
+#include <QStringList>
 #include "timespan.h"
 
 class Project : public QObject
@@ -40,21 +41,17 @@ class Project : public QObject
     Q_PROPERTY(QString description READ getDescription WRITE setDescription)
 public:    
     Q_INVOKABLE Project(QObject *parent = 0);
-    inline void setName(const QString & newName) { name = newName.trimmed(); emit changed();}
+    void setName(const QString & newName);
     inline QString getName() const { return name; }
-    inline void setDescription(const QString & newDescription) { description = newDescription.trimmed(); emit changed();}
+    void setDescription(const QString & newDescription);
     inline QString getDescription() const { return description; }
     void addTimeTrackingSession(TimeSpan * timeSpan);
     inline QVector<TimeSpan*> getTimeSpans() const { return timeSpans; }
     QString totalTimeSpent() const;    
     static Project* makeProject(const QString & name, const QString & description);
-    static QList<Project*> getProjects();
+    static QStringList getProjects();
     static Project* getProjectByName(const QString & name);
-    static QDomElement getAllProjectsAsDomElement(QDomDocument &d);
-    static void createProjectsFromDomElement(const QDomElement &d);
-    static bool save();
-    static bool restore();
-    bool saveTimespans();
+    bool save();
     static const QString TableName;
 signals:
     void changed();
@@ -66,8 +63,7 @@ private:
     QString description;
     QDateTime lastModified;
     QDateTime created;
-    QVector<TimeSpan*> timeSpans;
-    static QList<Project*> projects;
+    QVector<TimeSpan*> timeSpans;    
 };
 
 #endif // PROJECT_H

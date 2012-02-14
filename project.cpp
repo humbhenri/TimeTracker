@@ -31,8 +31,6 @@ or implied, of Humberto Pinheiro.*/
 #include <QDomDocument>
 #include <QVariant>
 
-QList<Project*> Project::projects;
-
 const QString Project::TableName = "project";
 
 Project::Project(QObject *parent) :
@@ -43,6 +41,7 @@ Project::Project(QObject *parent) :
 void Project::addTimeTrackingSession(TimeSpan * timeSpan)
 {
     timeSpans << timeSpan;
+    save();
     emit changed();
 }
 
@@ -64,113 +63,74 @@ Project* Project::makeProject(const QString &name, const QString &description)
     Project *p = new Project;
     p->setName(name.trimmed());
     p->setDescription(description.trimmed());
-    Project::projects.push_back(p);
+    p->save();
     return p;
 }
 
-QList<Project*> Project::getProjects()
+QStringList Project::getProjects()
 {
-    return Project::projects;
+    QStringList names;
+    DBUtils::GenericDao dao;
+    Project dummy;
+    QVector<QObject*> select = dao.select(dummy.metaObject(), "", Project::TableName);
+    foreach (QObject* o, select) {
+        Project * p = dynamic_cast<Project*>(o);
+        names << p->getName();
+    }
+
+    return names;
 }
 
 Project* Project::getProjectByName(const QString &name)
 {
-    QList<Project*>::iterator it = Project::projects.begin();
-    while (it != projects.end()) {
-        if ((*it)->getName() == name)
-            return *it;
-        it++;
+    DBUtils::GenericDao dao;
+    Project dummy, *p = 0;
+    QVector<QObject*> select = dao.select(dummy.metaObject(), "", Project::TableName);
+    foreach (QObject* o, select) {
+        p = dynamic_cast<Project*>(o);
+        if (p->getName() == name)
+            break;
     }
+    if (!p) {
+        return 0;
+    }
+
+    // load timespans
+    TimeSpan ts;
+    QVector<QObject*> timespans =
+            dao.select(ts.metaObject(), "projectId = " + p->property("id").toString(), TimeSpan::TableName);
+    foreach (QObject* o, timespans) {
+        TimeSpan *timespan = dynamic_cast<TimeSpan*>(o);
+        if (timespan) p->timeSpans << timespan;
+    }
+
     return 0;
 }
 
-QDomElement Project::getAllProjectsAsDomElement(QDomDocument & d)
-{
-    QDomElement root = d.createElement("projects");
-    d.appendChild(root);
-
-    QList<Project*>::iterator it = projects.begin();
-    for (; it != projects.end(); it++) {
-        QDomElement p = d.createElement("project");
-        p.setAttribute("name", (*it)->getName());
-        p.setAttribute("description", (*it)->getDescription());
-        QVector<TimeSpan*> timeSpans = (*it)->getTimeSpans();
-        QVector<TimeSpan*>::iterator tsIt = timeSpans.begin();
-        for (; tsIt != timeSpans.end(); tsIt++) {
-            p.appendChild((*tsIt)->toNode(d));
-        }
-        root.appendChild(p);
-    }
-
-    return root;
-}
-
-void Project::createProjectsFromDomElement(const QDomElement &e)
-{
-    if (!e.isNull() && e.tagName() == "projects") {
-        QDomNode n = e.firstChild();
-        while (!n.isNull()) {
-            QDomElement p = n.toElement();
-            if (!p.isNull() && p.tagName() == "project") {
-                Project *project = makeProject(
-                    p.attribute("name", ""),
-                    p.attribute("description", "")
-                );
-                QDomNode ts = p.firstChild();
-                while (!ts.isNull()){
-                    TimeSpan * timeSpan = TimeSpan::fromNode(ts.toElement());
-                    if (timeSpan->minutes() > 0)
-                        project->addTimeTrackingSession(timeSpan);
-                    ts = ts.nextSibling();
-                }
-            }
-            n = n.nextSibling();
-        }
-    }
-}
 
 bool Project::save()
-{    
-    bool ok = true;
-    DBUtils::GenericDao dao;
-    foreach (Project* p, Project::projects) {        
-        ok &= dao.insertOrUpdate(p, Project::TableName);
-        ok &= p->saveTimespans();
-    }    
-    if (!ok) {
-        qDebug(qPrintable(dao.lastError()));
-    }
-    return ok;
-}
-
-bool Project::saveTimespans()
 {
     bool ok = true;
+    DBUtils::GenericDao dao;
+    ok &= dao.insertOrUpdate(this, Project::TableName);
     foreach (TimeSpan * ts, getTimeSpans()) {
         ok &= ts->save(property("id"));
     }
-    if (ok) {
-        lastModified = QDateTime::currentDateTime();
-    }
-
     return ok;
 }
 
-bool Project::restore()
+
+void Project::setName(const QString & newName)
 {
-    DBUtils::GenericDao dao;
-    Project dummy;
-    TimeSpan ts;
-    QVector<QObject*> projects = dao.select(dummy.metaObject(), "", Project::TableName);
-    foreach (QObject* o, projects) {
-        Project *p = dynamic_cast<Project*>(o);
-        Project::projects << p;
-        QVector<QObject*> timespans =
-                dao.select(ts.metaObject(), "projectId = " + p->property("id").toString(), TimeSpan::TableName);
-        foreach (QObject *tsObj, timespans) {
-            TimeSpan * timespan = dynamic_cast<TimeSpan*>(tsObj);
-            p->addTimeTrackingSession(timespan);            
-        }        
-    }
-    return dao.lastOperationSuccess();
+    name = newName.trimmed();
+    save();
+    emit changed();
+}
+
+
+void Project::setDescription(const QString & newDescription)
+{
+    description = newDescription.trimmed();
+    save();
+    emit changed();
 }
