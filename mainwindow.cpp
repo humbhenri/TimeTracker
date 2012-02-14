@@ -34,8 +34,6 @@ or implied, of Humberto Pinheiro.*/
 #include <QDesktopServices>
 #include <QUrl>
 #include <QDir>
-#include <QSqlDatabase>
-#include <QSqlQuery>
 #include "preferenceswidget.h"
 #include "preferences.h"
 #include "trayiconcommand.h"
@@ -78,19 +76,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     trayIcon->show();
 
-    trackBeginning = QDateTime::currentDateTime();
-
-    initDB();
-
-    restoreProjects();
+    trackBeginning = QDateTime::currentDateTime();    
 }
 
 MainWindow::~MainWindow()
 {
     if (isTracking)
         stopClock();
-    preferences->savePreferences();
-    Project::save();
+    preferences->savePreferences();    
     delete ui;
     delete trayIcon;
     delete trayIconMenu;
@@ -100,7 +93,6 @@ MainWindow::~MainWindow()
     delete minimizeAction;
     delete restoreAction;
     delete quitAction;
-    closeDB();
 }
 
 void MainWindow::setVisible(bool visible)
@@ -337,27 +329,4 @@ void MainWindow::shotScreen()
 void MainWindow::updateTrayIconToolTip(QString txt)
 {
     trayIcon->setToolTip(txt);
-}
-
-void MainWindow::initDB()
-{
-    QString path(QDir::homePath());
-    path.append(QDir::separator()).append(DBName);
-    path = QDir::toNativeSeparators(path);
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(path);
-    db.open();
-    QSqlQuery query("create table project(id integer primary key, name text, description text, created text, lastModified text)");
-    QSqlQuery query2("create table timespan(id integer primary key, start text, end text, projectId integer, FOREIGN KEY(projectId) REFERENCES project(id))");
-}
-
-void MainWindow::closeDB()
-{
-    QSqlDatabase db = QSqlDatabase::database();
-    db.close();
-}
-
-void MainWindow::restoreProjects()
-{
-    Project::restore();
 }

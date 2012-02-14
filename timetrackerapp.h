@@ -10,6 +10,8 @@ class TimeTrackerApp : public QApplication
 public:
     explicit TimeTrackerApp(int & argc, char** argv);
     virtual ~TimeTrackerApp();
+    void initDB();
+    void closeDB();
 
 private:
     MainWindow* mainWindow;

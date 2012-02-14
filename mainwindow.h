@@ -80,8 +80,6 @@ private:
     void createNewTimeSession();    
     Project *getCurrentProject();
     QString createScreenShotFolder(const QString &);
-    void initDB();
-    void closeDB();
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -94,7 +92,6 @@ private slots:
     void toggleScreenShots(bool);
     void shotScreen();
     void updateTrayIconToolTip(QString);
-    void restoreProjects();
 };
 
 #endif // MAINWINDOW_H
