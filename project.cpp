@@ -78,6 +78,8 @@ QStringList Project::getProjects()
         names << p->getName();
     }
 
+    select.clear();
+
     return names;
 }
 
