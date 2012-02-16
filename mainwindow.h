@@ -88,6 +88,8 @@ private slots:
     void startClock();
     void stopClock();
     void toggleTracking();
+    void stopTracking();
+    void startTracking();
     void openPaypalPage();
     void toggleScreenShots(bool);
     void shotScreen();

@@ -81,8 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    if (isTracking)
-        stopClock();
+    stopTracking();
     preferences->savePreferences();    
     delete ui;
     delete trayIcon;
@@ -202,6 +201,8 @@ void MainWindow::makeConnections() {
 
     connect(prefWidget, SIGNAL(screenShotEnabled(bool)), this, SLOT(toggleScreenShots(bool)));
 
+    connect(prefWidget, SIGNAL(currentProjectChanged(QString)), this, SLOT(stopTracking()));
+
     connect(&screenShotTimer, SIGNAL(timeout()), this, SLOT(shotScreen()));
 
     // change tray icon tooltip with the new current project
@@ -231,13 +232,10 @@ void MainWindow::stopClock()
 void MainWindow::toggleTracking()
 {    
     if (isTracking) {
-        stopClock();        
-        screenShotTimer.stop();
+        stopTracking();
     }
     else {
-        startClock();
-        if (isTakingScreenShots)
-            toggleScreenShots(true);
+        startTracking();
     }
 }
 
@@ -329,4 +327,19 @@ void MainWindow::shotScreen()
 void MainWindow::updateTrayIconToolTip(QString txt)
 {
     trayIcon->setToolTip(txt);
+}
+
+void MainWindow::stopTracking()
+{
+    if (isTracking) {
+        stopClock();
+        screenShotTimer.stop();
+    }
+}
+
+void MainWindow::startTracking()
+{
+    startClock();
+    if (isTakingScreenShots)
+        toggleScreenShots(true);
 }
