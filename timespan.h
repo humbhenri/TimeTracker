@@ -67,6 +67,7 @@ public:
     QDomElement toNode(QDomDocument &d);
     static TimeSpan * fromNode(const QDomElement & e);
     bool save (QVariant projectId);
+    QVector<TimeSpan*> findAllByDate(const QDate & date);
 private:
     QDateTime end;
     QDateTime start;

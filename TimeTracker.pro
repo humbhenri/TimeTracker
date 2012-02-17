@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     screenshot.cpp \
     genericdao.cpp \
     debugutils.cpp \
-    timetrackerapp.cpp
+    timetrackerapp.cpp \
+    reportwidget.cpp
 
 HEADERS  += mainwindow.h \
     preferenceswidget.h \
@@ -35,12 +36,14 @@ HEADERS  += mainwindow.h \
     screenshot.h \
     genericdao.h \
     debugutils.h \
-    timetrackerapp.h
+    timetrackerapp.h \
+    reportwidget.h
 
 FORMS += mainwindow.ui \
     preferenceswidget.ui \
     projectwidget.ui \
-    createprojectdialog.ui
+    createprojectdialog.ui \
+    reportwidget.ui
 
 RESOURCES += \
     res.qrc
@@ -51,6 +54,9 @@ win32 {
 macx-g++{
     ICON = images/timetracker.icns
 }
+
+
+
 
 
 

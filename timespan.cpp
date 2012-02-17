@@ -171,3 +171,15 @@ bool TimeSpan::save(QVariant projectId)
     bool ok = dao.insertOrUpdate(this, TableName, FkName, projectId);
     return ok;
 }
+
+QVector<TimeSpan *> TimeSpan::findAllByDate(const QDate & date)
+{
+    // TODO
+//    DBUtils::GenericDao dao;
+//    QVector<TimeSpan*> found;
+//    QVector<QObject*> result = dao.select(this->metaObject(), "start ", TimeSpan::TableName);
+//    foreach (QObject* o, result) {
+//        found << dynamic_cast<TimeSpan*>(o);
+//    }
+//    return found;
+}
