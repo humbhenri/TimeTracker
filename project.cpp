@@ -109,6 +109,17 @@ Project* Project::getProjectByName(const QString &name)
     return p;
 }
 
+Project *Project::getProjectById(int id)
+{
+    DBUtils::GenericDao dao;
+    Project dummy;
+    QVector<QObject*> select = dao.select(
+                dummy.metaObject(), "id = " + QString::number(id), Project::TableName);
+    if (select.count() > 0)
+        return dynamic_cast<Project*>(select.at(0));
+    return 0;
+}
+
 
 bool Project::save()
 {

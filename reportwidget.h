@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+class QStandardItemModel;
+
 namespace Ui {
     class ReportWidget;
 }
@@ -15,13 +17,15 @@ public:
     explicit ReportWidget(QWidget *parent = 0);
     ~ReportWidget();
     QString getDate() const;
-    void updateReport();
 
 private:
+    void prepareReportTableView();
+    QStandardItemModel* reportTableModel;
     Ui::ReportWidget *ui;
 
 private slots:
     void setDateLabel();
+    void updateReport();
 };
 
 #endif // REPORTWIDGET_H

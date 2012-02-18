@@ -175,11 +175,13 @@ bool TimeSpan::save(QVariant projectId)
 QVector<TimeSpan *> TimeSpan::findAllByDate(const QDate & date)
 {
     // TODO
-//    DBUtils::GenericDao dao;
-//    QVector<TimeSpan*> found;
-//    QVector<QObject*> result = dao.select(this->metaObject(), "start ", TimeSpan::TableName);
-//    foreach (QObject* o, result) {
-//        found << dynamic_cast<TimeSpan*>(o);
-//    }
-//    return found;
+    DBUtils::GenericDao dao;
+    QVector<TimeSpan*> found;
+    QString query = "date(start) = " + QVariant(date).toString();
+    TimeSpan dummy;
+    QVector<QObject*> result = dao.select(dummy.metaObject(), query, TimeSpan::TableName);
+    foreach (QObject* o, result) {
+        found << dynamic_cast<TimeSpan*>(o);
+    }
+    return found;
 }
