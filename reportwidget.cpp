@@ -12,10 +12,10 @@ ReportWidget::ReportWidget(QWidget *parent) :
     ui(new Ui::ReportWidget)
 {
     ui->setupUi(this);
+    prepareReportTableView();
     connect(ui->dateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(setDateLabel()));
     connect(ui->dateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(updateReport()));
     ui->dateEdit->setDate(QDate::currentDate());
-    prepareReportTableView();
 }
 
 ReportWidget::~ReportWidget()
@@ -36,6 +36,7 @@ QString ReportWidget::getDate() const
 
 void ReportWidget::updateReport()
 {
+    reportTableModel->removeRows(0, reportTableModel->rowCount());
     QList<QStandardItem*> items;
     QVector<TimeSpan*> timespans = TimeSpan::findAllByDate(ui->dateEdit->date());
     QMap<int, Project*> projects;
