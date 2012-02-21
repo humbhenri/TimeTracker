@@ -177,7 +177,7 @@ QVector<TimeSpan *> TimeSpan::findAllByDate(const QDate & date)
     // TODO
     DBUtils::GenericDao dao;
     QVector<TimeSpan*> found;
-    QString query = "date(start) = " + QVariant(date).toString();
+    QString query = QString("date(start) = ") + QString("\"") +QVariant(date).toString() + QString("\"");
     TimeSpan dummy;
     QVector<QObject*> result = dao.select(dummy.metaObject(), query, TimeSpan::TableName);
     foreach (QObject* o, result) {

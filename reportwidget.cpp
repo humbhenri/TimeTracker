@@ -26,7 +26,7 @@ ReportWidget::~ReportWidget()
 
 void ReportWidget::setDateLabel()
 {
-    ui->dateLabel->setText(getDate());
+    ui->dateLabel->setText("<b>" + getDate() + "<\b>");
 }
 
 QString ReportWidget::getDate() const
@@ -75,4 +75,5 @@ void ReportWidget::prepareReportTableView()
     reportTableModel->setHeaderData(2, Qt::Horizontal, QObject::tr("End"));
     ui->reportTableView->setModel(reportTableModel);
     ui->reportTableView->horizontalHeader()->setStretchLastSection(true);
+    ui->reportTableView->setSortingEnabled(true);
 }
