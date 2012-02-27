@@ -46,7 +46,8 @@ ProjectWidget::ProjectWidget(QWidget *parent) :
     fillProjectComboBox();
 
     connect(ui->projectComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(loadProjectDetails()));
-    connect(ui->descriptionTextEdit, SIGNAL(textChanged()), this, SLOT(saveProjectDescription()));
+//    connect(ui->descriptionTextEdit, SIGNAL(textChanged()), this, SLOT(saveProjectDescription()));
+    ui->descriptionTextEdit->installEventFilter(this);
 }
 
 ProjectWidget::~ProjectWidget()
@@ -123,4 +124,13 @@ void ProjectWidget::on_screenshotsPushButton_clicked()
              projectName).path();
     qDebug(path.toAscii().data());
     QDesktopServices::openUrl(QUrl("file:///" + path));
+}
+
+bool ProjectWidget::eventFilter(QObject *target, QEvent *event)
+{
+    if (target == ui->descriptionTextEdit && event->type() == QEvent::FocusOut) {
+        saveProjectDescription();
+        return true;
+    }
+    return false;
 }

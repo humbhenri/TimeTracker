@@ -47,7 +47,8 @@ public:
 private:
     Ui::ProjectWidget *ui;
     QStandardItemModel* historyModel;
-    void prepareHistoryTable();    
+    void prepareHistoryTable();
+    virtual bool eventFilter(QObject *target, QEvent *event);
 
 public slots:
     void loadProjectDetails();
