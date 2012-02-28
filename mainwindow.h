@@ -77,7 +77,8 @@ private:
     void fillCheckboxes();
     void makeConnections();
     void createCommands();
-    void createNewTimeSession();    
+    void createNewTimeSession();
+    void createNewTimeSession(Project*);
     Project *getCurrentProject();
     QString createScreenShotFolder(const QString &);
 
@@ -94,6 +95,7 @@ private slots:
     void toggleScreenShots(bool);
     void shotScreen();
     void updateTrayIconToolTip(QString);
+    void switchProject(Project* older);
 };
 
 #endif // MAINWINDOW_H

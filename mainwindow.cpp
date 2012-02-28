@@ -201,7 +201,7 @@ void MainWindow::makeConnections() {
 
     connect(prefWidget, SIGNAL(screenShotEnabled(bool)), this, SLOT(toggleScreenShots(bool)));
 
-    connect(prefWidget, SIGNAL(currentProjectChanged(QString)), this, SLOT(stopTracking()));
+    connect(preferences, SIGNAL(projectChanged(Project*)), this, SLOT(switchProject(Project*)));
 
     connect(&screenShotTimer, SIGNAL(timeout()), this, SLOT(shotScreen()));
 
@@ -249,20 +249,23 @@ void MainWindow::createCommands()
     preferences->setCommands(commands);
 }
 
-void MainWindow::createNewTimeSession()
-{
+void MainWindow::createNewTimeSession(Project* p) {
     QDateTime currentTime = QDateTime::currentDateTime();
     TimeSpan * gap = new TimeSpan(trackBeginning, currentTime);
-    Project *currentProject = getCurrentProject();
-    if (currentProject) {
-        currentProject->addTimeTrackingSession(gap);
+    if (p) {
+        p->addTimeTrackingSession(gap);
         // refresh project details widget
         QComboBox *projectCombobox = projWidget->findChild<QComboBox*>("projectComboBox");
         if (projectCombobox &&
-            currentProject->getName() == projectCombobox->currentText()){
+            p->getName() == projectCombobox->currentText()){
             projWidget->loadProjectDetails();
         }
     }
+}
+
+void MainWindow::createNewTimeSession()
+{
+    createNewTimeSession(getCurrentProject());
 }
 
 // open a web page with the paypal url asking for a donation using the defaul web browser
@@ -342,4 +345,11 @@ void MainWindow::startTracking()
     startClock();
     if (isTakingScreenShots)
         toggleScreenShots(true);
+}
+
+void MainWindow::switchProject(Project *older)
+{
+    if (isTracking)
+        createNewTimeSession(older);
+    startTracking();
 }

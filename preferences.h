@@ -31,6 +31,7 @@ or implied, of Humberto Pinheiro.*/
 #include <QMap>
 
 class TrayIconCommand;
+class Project;
 
 class Preferences : public QObject
 {
@@ -48,7 +49,7 @@ public:
     QString getSingleClickCommandName();
     QString getDoubleClickCommandName();
     void setCommands(QMap<QString,TrayIconCommand*> *map);
-    inline void setCurrentProject(const QString & project) { currentProject = project; emit changed();}
+    void setCurrentProject(const QString & project);
     QString getCurrentProject() const { return currentProject; }
     static QString SINGLE_CLICK;
     static QString DOUBLE_CLICK;
@@ -64,6 +65,7 @@ private:
 
 signals:
     void changed();
+    void projectChanged(Project*);
 
 public slots:
 

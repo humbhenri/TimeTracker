@@ -113,12 +113,6 @@ void PreferencesWidget::showProjectDialog()
 
 void PreferencesWidget::setCurrentProject(const QString &project)
 {
-#if 0
-    qDebug("PreferencesWidget::setCurrentProject called with project = %s", project.toAscii().data());
-    QObject* sender = this->sender();
-    if (sender)
-        qDebug("Sender = %s", sender->objectName().toAscii().data());
-#endif
     ui->projectsComboBox->blockSignals(true);
     preferences->setCurrentProject(project);    
     ui->projectsComboBox->setCurrentIndex(Project::getProjects().indexOf((project)));

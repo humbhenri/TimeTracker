@@ -129,3 +129,8 @@ QString Preferences::getProjectsXMLFile()
 
     return dir.path() + QString("/") + Preferences::PROJECTS_XML_FILE;
 }
+
+void Preferences::setCurrentProject(const QString & project) {
+    emit projectChanged(Project::getProjectByName(currentProject));
+    currentProject = project;
+}
