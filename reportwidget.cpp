@@ -57,6 +57,8 @@ void ReportWidget::updateReport()
             }
             items.append(new QStandardItem(timespan->getStart().time().toString()));
             items.append(new QStandardItem(timespan->getEnd().time().toString()));
+            foreach (QStandardItem* item, items)
+                item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
             reportTableModel->appendRow(items);
             items.clear();
         }

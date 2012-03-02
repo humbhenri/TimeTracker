@@ -41,8 +41,10 @@ ProjectWidget::ProjectWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ProjectWidget)
 {
-    ui->setupUi(this);
+    ui->setupUi(this);    
+
     prepareHistoryTable();
+
     fillProjectComboBox();
 
     connect(ui->projectComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(loadProjectDetails()));
@@ -62,7 +64,7 @@ void ProjectWidget::prepareHistoryTable()
     historyModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Duration"));
     ui->historyTableView->setModel(historyModel);
     ui->historyTableView->horizontalHeader()->setStretchLastSection(true);
-    ui->historyTableView->setColumnWidth(0, 130);
+    ui->historyTableView->setColumnWidth(0, 130);    
 }
 
 void ProjectWidget::loadProjectDetails()
@@ -80,7 +82,9 @@ void ProjectWidget::loadProjectDetails()
     QList<QStandardItem*> items;
     while (it != timeSpans.end()) {
         QStandardItem *beginning = new QStandardItem((*it)->getStart().toString("MMM dd yyyy hh:mm:ss"));
+        beginning->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         QStandardItem *duration = new QStandardItem((*it)->toString());
+        duration->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         items.append(beginning);
         items.append(duration);
         historyModel->appendRow(items);
