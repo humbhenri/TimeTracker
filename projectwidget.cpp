@@ -76,20 +76,22 @@ void ProjectWidget::loadProjectDetails()
     ui->descriptionTextEdit->setText( project->getDescription());
     ui->timeSpentLabel->setText(project->totalTimeSpent());
 
-    QVector<TimeSpan*> timeSpans = project->getTimeSpans();
-    QVector<TimeSpan*>::iterator it = timeSpans.begin();
     historyModel->removeRows(0, historyModel->rowCount());
+
+    QVector<TimeSpan*> timeSpans = project->getTimeSpans();
+    QVectorIterator<TimeSpan*> it(timeSpans);
+    it.toBack();
     QList<QStandardItem*> items;
-    while (it != timeSpans.end()) {
-        QStandardItem *beginning = new QStandardItem((*it)->getStart().toString("MMM dd yyyy hh:mm:ss"));
+    while (it.hasPrevious()) {
+        TimeSpan *ts = it.previous();
+        QStandardItem *beginning = new QStandardItem(ts->getStart().toString("MMM dd yyyy hh:mm:ss"));
         beginning->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        QStandardItem *duration = new QStandardItem((*it)->toString());
+        QStandardItem *duration = new QStandardItem(ts->toString());
         duration->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         items.append(beginning);
         items.append(duration);
         historyModel->appendRow(items);
-        items.clear();
-        it++;
+        items.clear();        
     }
     ui->historyTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
