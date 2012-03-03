@@ -55,6 +55,9 @@ macx-g++{
     ICON = images/timetracker.icns
 }
 
+win32:RC_FILE  += TimeTracker.rc
+
+
 
 
 
