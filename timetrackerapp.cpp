@@ -5,6 +5,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QDir>
+#include <QDesktopWidget>
 
 TimeTrackerApp::TimeTrackerApp(int & argc, char** argv) :
     QApplication(argc, argv)
@@ -15,6 +16,9 @@ TimeTrackerApp::TimeTrackerApp(int & argc, char** argv) :
     initDB();
 
     mainWindow = new MainWindow();
+    QRect frect = mainWindow->frameGeometry();
+    frect.moveCenter(QDesktopWidget().availableGeometry().center());
+    mainWindow->move(frect.topLeft());
     mainWindow->show();
 
 }
