@@ -23,6 +23,9 @@ private:
     QStandardItemModel* reportTableModel;
     Ui::ReportWidget *ui;
 
+protected:
+    virtual void showEvent(QShowEvent *);
+
 private slots:
     void setDateLabel();
     void updateReport();

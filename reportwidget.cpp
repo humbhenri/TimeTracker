@@ -14,7 +14,7 @@ ReportWidget::ReportWidget(QWidget *parent) :
     ui->setupUi(this);
     prepareReportTableView();
     connect(ui->dateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(setDateLabel()));
-    connect(ui->dateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(updateReport()));
+    connect(ui->dateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(updateReport()));    
     ui->dateEdit->setDate(QDate::currentDate());
 }
 
@@ -79,4 +79,9 @@ void ReportWidget::prepareReportTableView()
     ui->reportTableView->setModel(reportTableModel);
     ui->reportTableView->horizontalHeader()->setStretchLastSection(true);
     ui->reportTableView->setSortingEnabled(true);
+}
+
+void ReportWidget::showEvent(QShowEvent *)
+{
+    updateReport();
 }
