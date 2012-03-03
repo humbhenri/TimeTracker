@@ -39,6 +39,7 @@ class PreferencesWidget;
 class TrayIconCommand;
 class ProjectWidget;
 class Project;
+class QShortcut;
 
 namespace Ui {
     class MainWindow;
@@ -72,6 +73,8 @@ private:
     bool isTakingScreenShots;
     QDateTime trackBeginning;
     QTimer screenShotTimer;
+    QShortcut *nextTabShortcut;
+    QShortcut *quitShortcut;
     void createActions();
     void createTrayIcon();
     void fillCheckboxes();
@@ -81,6 +84,7 @@ private:
     void createNewTimeSession(Project*);
     Project *getCurrentProject();
     QString createScreenShotFolder(const QString &);
+    void setUpKeyShortcuts();
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -96,6 +100,7 @@ private slots:
     void shotScreen();
     void updateTrayIconToolTip(QString);
     void switchProject(Project* older);
+    void nextTab();
 };
 
 #endif // MAINWINDOW_H

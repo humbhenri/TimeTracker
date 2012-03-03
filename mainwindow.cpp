@@ -34,6 +34,7 @@ or implied, of Humberto Pinheiro.*/
 #include <QDesktopServices>
 #include <QUrl>
 #include <QDir>
+#include <QShortcut>
 #include "preferenceswidget.h"
 #include "preferences.h"
 #include "trayiconcommand.h"
@@ -55,7 +56,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     screenShotTimer(this),
     isTracking(false),
-    isTakingScreenShots(false)
+    isTakingScreenShots(false),
+    nextTabShortcut(0),
+    quitShortcut(0)
 {    
     preferences = new Preferences;
     createCommands();
@@ -77,6 +80,8 @@ MainWindow::MainWindow(QWidget *parent) :
     trayIcon->show();
 
     trackBeginning = QDateTime::currentDateTime();    
+
+    setUpKeyShortcuts();
 }
 
 MainWindow::~MainWindow()
@@ -92,6 +97,7 @@ MainWindow::~MainWindow()
     delete minimizeAction;
     delete restoreAction;
     delete quitAction;
+    delete nextTabShortcut;
 }
 
 void MainWindow::setVisible(bool visible)
@@ -352,4 +358,18 @@ void MainWindow::switchProject(Project *older)
     if (isTracking)
         createNewTimeSession(older);
     startTracking();
+}
+
+void MainWindow::setUpKeyShortcuts()
+{
+    nextTabShortcut = new QShortcut(QKeySequence("Ctrl+Tab"), this);
+    connect(nextTabShortcut, SIGNAL(activated()), this, SLOT(nextTab()));
+    quitShortcut = new QShortcut(QKeySequence("Ctrl+Q"), this);
+    connect(quitShortcut, SIGNAL(activated()), qApp, SLOT(quit()));
+}
+
+void MainWindow::nextTab()
+{
+    int index = ui->tabWidget->currentIndex();
+    ui->tabWidget->setCurrentIndex(++index % ui->tabWidget->count());
 }
