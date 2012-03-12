@@ -28,7 +28,7 @@ protected:
 
 private slots:
     void setDateLabel();
-    void updateReport();
+    void fillTableReport();
 };
 
 #endif // REPORTWIDGET_H

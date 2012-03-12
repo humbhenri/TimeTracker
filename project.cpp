@@ -55,7 +55,7 @@ QString Project::totalTimeSpent() const
         it++;
     }
 
-    return TimeSpan::toString(totalSecs);
+    return TimeSpan::duration(totalSecs);
 }
 
 Project* Project::makeProject(const QString &name, const QString &description)

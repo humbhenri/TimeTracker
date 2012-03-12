@@ -44,8 +44,8 @@ public:
     TimeSpan(const TimeSpan & other);
     TimeSpan(const QDateTime&, const QDateTime&);
     TimeSpan(const QObject& obj);
-    QString toString() const;
-    static QString toString(int totalSeconds);
+    QString duration() const;
+    static QString duration(int totalSeconds);
     int seconds() const;
     int minutes() const;
     int hours() const;

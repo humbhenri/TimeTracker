@@ -14,7 +14,7 @@ ReportWidget::ReportWidget(QWidget *parent) :
     ui->setupUi(this);
     prepareReportTableView();
     connect(ui->dateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(setDateLabel()));
-    connect(ui->dateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(updateReport()));    
+    connect(ui->dateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(fillTableReport()));
     ui->dateEdit->setDate(QDate::currentDate());
 }
 
@@ -34,10 +34,12 @@ QString ReportWidget::getDate() const
     return ui->dateEdit->date().toString();
 }
 
-void ReportWidget::updateReport()
+void ReportWidget::fillTableReport()
 {
     reportTableModel->removeRows(0, reportTableModel->rowCount());
     QList<QStandardItem*> items;
+
+    // Get timespans beginning at the chosen date, with the respective projects, and append them
     QVector<TimeSpan*> timespans = TimeSpan::findAllByDate(ui->dateEdit->date());
     QMap<int, Project*> projects;
     foreach (TimeSpan* timespan, timespans) {
@@ -57,6 +59,7 @@ void ReportWidget::updateReport()
             }
             items.append(new QStandardItem(timespan->getStart().time().toString()));
             items.append(new QStandardItem(timespan->getEnd().time().toString()));
+            items.append(new QStandardItem(timespan->duration()));
             foreach (QStandardItem* item, items)
                 item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
             reportTableModel->appendRow(items);
@@ -73,10 +76,11 @@ void ReportWidget::updateReport()
 
 void ReportWidget::prepareReportTableView()
 {
-    reportTableModel = new QStandardItemModel(0, 3, this);
+    reportTableModel = new QStandardItemModel(0, 4, this);
     reportTableModel->setHeaderData(0, Qt::Horizontal, QObject::tr("Project"));
     reportTableModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Start"));
     reportTableModel->setHeaderData(2, Qt::Horizontal, QObject::tr("End"));
+    reportTableModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Duration"));
     ui->reportTableView->setModel(reportTableModel);
     ui->reportTableView->horizontalHeader()->setStretchLastSection(true);
     ui->reportTableView->setSortingEnabled(true);
@@ -84,5 +88,5 @@ void ReportWidget::prepareReportTableView()
 
 void ReportWidget::showEvent(QShowEvent *)
 {
-    updateReport();
+    fillTableReport();
 }

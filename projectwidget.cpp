@@ -86,7 +86,7 @@ void ProjectWidget::loadProjectDetails()
         TimeSpan *ts = it.previous();
         QStandardItem *beginning = new QStandardItem(ts->getStart().toString("MMM dd yyyy hh:mm:ss"));
         beginning->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        QStandardItem *duration = new QStandardItem(ts->toString());
+        QStandardItem *duration = new QStandardItem(ts->duration());
         duration->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         items.append(beginning);
         items.append(duration);

@@ -77,7 +77,7 @@ TimeSpan::TimeSpan(const QObject &obj)
     discardMilliseconds();
 }
 
-QString TimeSpan::toString() const
+QString TimeSpan::duration() const
 {
     int seconds_span = start.secsTo(end);
     int ndays = seconds_span / TimeSpan::SecondsPerDay;
@@ -91,7 +91,7 @@ QString TimeSpan::toString() const
         return string;
 }
 
-QString TimeSpan::toString(int totalSeconds)
+QString TimeSpan::duration(int totalSeconds)
 {
     int ndays = totalSeconds / TimeSpan::SecondsPerDay;
     int minutes = (totalSeconds / TimeSpan::SecondsPerMinute) % TimeSpan::MinutesPerHour;
