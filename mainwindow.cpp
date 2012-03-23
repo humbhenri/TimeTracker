@@ -35,7 +35,6 @@ or implied, of Humberto Pinheiro.*/
 #include <QUrl>
 #include <QDir>
 #include <QShortcut>
-#include "preferenceswidget.h"
 #include "preferences.h"
 #include "trayiconcommand.h"
 #include "projectwidget.h"
@@ -57,7 +56,6 @@ MainWindow::MainWindow(QWidget *parent) :
     screenShotTimer(this),
     isTracking(false),
     isTakingScreenShots(false),
-    nextTabShortcut(0),
     quitShortcut(0)
 {    
     preferences = new Preferences;
@@ -67,9 +65,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     setWindowIcon(QIcon(WINDOW_ICON));
-
-    prefWidget = ui->centralWidget->findChild<PreferencesWidget*>("preferencesWidget");
-    prefWidget->setModel(preferences);
 
     createActions();
 
@@ -97,7 +92,6 @@ MainWindow::~MainWindow()
     delete minimizeAction;
     delete restoreAction;
     delete quitAction;
-    delete nextTabShortcut;
 }
 
 void MainWindow::setVisible(bool visible)
@@ -201,18 +195,13 @@ void MainWindow::makeConnections() {
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
              this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
-    // reload project tab's combobox if a new project is added
-    projWidget = ui->centralWidget->findChild<ProjectWidget*>("projectWidget");
-    connect(prefWidget, SIGNAL(projectAdded()), projWidget, SLOT(fillProjectComboBox()));
-
-    connect(prefWidget, SIGNAL(screenShotEnabled(bool)), this, SLOT(toggleScreenShots(bool)));
 
     connect(preferences, SIGNAL(projectChanged(Project*)), this, SLOT(switchProject(Project*)));
 
     connect(&screenShotTimer, SIGNAL(timeout()), this, SLOT(shotScreen()));
 
     // change tray icon tooltip with the new current project
-    connect(prefWidget, SIGNAL(currentProjectChanged(QString)), SLOT(updateTrayIconToolTip(QString)));
+//    connect(prefWidget, SIGNAL(currentProjectChanged(QString)), SLOT(updateTrayIconToolTip(QString)));
 
 }
 
@@ -289,17 +278,17 @@ void MainWindow::toggleScreenShots(bool enabled)
 {
     isTakingScreenShots = enabled;
     if (isTakingScreenShots && isTracking) {
-        QComboBox *screenComboBox = prefWidget->findChild<QComboBox*>("screenComboBox");
-        if (screenComboBox) {
-            QString text = screenComboBox->currentText();
-            int intervalSeconds = 0;
-            if (text == "5s") intervalSeconds = 5;
-            else if (text == "30s") intervalSeconds = 30;
-            else if (text == "1min") intervalSeconds = 60;
-            else if (text == "5min") intervalSeconds = 300;
-            screenShotTimer.stop();
-            screenShotTimer.start(intervalSeconds * 1000);
-        }
+//        QComboBox *screenComboBox = prefWidget->findChild<QComboBox*>("screenComboBox");
+//        if (screenComboBox) {
+//            QString text = screenComboBox->currentText();
+//            int intervalSeconds = 0;
+//            if (text == "5s") intervalSeconds = 5;
+//            else if (text == "30s") intervalSeconds = 30;
+//            else if (text == "1min") intervalSeconds = 60;
+//            else if (text == "5min") intervalSeconds = 300;
+//            screenShotTimer.stop();
+//            screenShotTimer.start(intervalSeconds * 1000);
+//        }
     }
     else {
         screenShotTimer.stop();
@@ -362,14 +351,6 @@ void MainWindow::switchProject(Project *older)
 
 void MainWindow::setUpKeyShortcuts()
 {
-    nextTabShortcut = new QShortcut(QKeySequence("Ctrl+Tab"), this);
-    connect(nextTabShortcut, SIGNAL(activated()), this, SLOT(nextTab()));
     quitShortcut = new QShortcut(QKeySequence("Ctrl+Q"), this);
     connect(quitShortcut, SIGNAL(activated()), qApp, SLOT(quit()));
-}
-
-void MainWindow::nextTab()
-{
-    int index = ui->tabWidget->currentIndex();
-    ui->tabWidget->setCurrentIndex(++index % ui->tabWidget->count());
 }

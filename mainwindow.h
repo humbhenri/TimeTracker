@@ -72,8 +72,7 @@ private:
     bool isTracking;
     bool isTakingScreenShots;
     QDateTime trackBeginning;
-    QTimer screenShotTimer;
-    QShortcut *nextTabShortcut;
+    QTimer screenShotTimer;    
     QShortcut *quitShortcut;
     void createActions();
     void createTrayIcon();
@@ -99,8 +98,7 @@ private slots:
     void toggleScreenShots(bool);
     void shotScreen();
     void updateTrayIconToolTip(QString);
-    void switchProject(Project* older);
-    void nextTab();
+    void switchProject(Project* older);    
 };
 
 #endif // MAINWINDOW_H
