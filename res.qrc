@@ -2,5 +2,7 @@
     <qresource prefix="/res">
         <file>images/clock.png</file>
         <file>images/clock-off.png</file>
+        <file>images/wrench.png</file>
+        <file>images/plus_alt_32x32.png</file>
     </qresource>
 </RCC>
