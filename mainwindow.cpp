@@ -202,6 +202,8 @@ void MainWindow::makeConnections() {
 
     // change tray icon tooltip with the new current project
 //    connect(prefWidget, SIGNAL(currentProjectChanged(QString)), SLOT(updateTrayIconToolTip(QString)));
+    QPushButton *trackBtn = getTrackBtn();
+    connect(trackBtn, SIGNAL(clicked()), this, SLOT(toggleTracking()));
 
 }
 
@@ -332,12 +334,16 @@ void MainWindow::stopTracking()
     if (isTracking) {
         stopClock();
         screenShotTimer.stop();
+        QPushButton *trackBtn = getTrackBtn();
+        trackBtn->setText("Start");
     }
 }
 
 void MainWindow::startTracking()
 {
     startClock();
+    QPushButton *trackBtn = getTrackBtn();
+    trackBtn->setText("Stop");
     if (isTakingScreenShots)
         toggleScreenShots(true);
 }
@@ -353,4 +359,9 @@ void MainWindow::setUpKeyShortcuts()
 {
     quitShortcut = new QShortcut(QKeySequence("Ctrl+Q"), this);
     connect(quitShortcut, SIGNAL(activated()), qApp, SLOT(quit()));
+}
+
+QPushButton * MainWindow::getTrackBtn()
+{
+    return ui->centralWidget->findChild<QPushButton*>("trackBtn");
 }

@@ -40,6 +40,7 @@ class TrayIconCommand;
 class ProjectWidget;
 class Project;
 class QShortcut;
+class QPushButton;
 
 namespace Ui {
     class MainWindow;
@@ -84,6 +85,7 @@ private:
     Project *getCurrentProject();
     QString createScreenShotFolder(const QString &);
     void setUpKeyShortcuts();
+    QPushButton *getTrackBtn();
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);

@@ -48,7 +48,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout_2">
+      <layout class="QGridLayout" name="R">
        <property name="margin">
         <number>0</number>
        </property>
@@ -109,11 +109,25 @@
         </spacer>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="timeLbl">
-         <property name="text">
-          <string>00:00:00</string>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>0</number>
          </property>
-        </widget>
+         <item>
+          <widget class="QPushButton" name="trackBtn">
+           <property name="text">
+            <string>Start</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="timeLbl">
+           <property name="text">
+            <string>00:00:00</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
