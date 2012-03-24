@@ -35,12 +35,12 @@ or implied, of Humberto Pinheiro.*/
 
 class QCloseEvent;
 class Preferences;
-class PreferencesWidget;
 class TrayIconCommand;
-class ProjectWidget;
 class Project;
 class QShortcut;
 class QPushButton;
+class QLabel;
+class Clock;
 
 namespace Ui {
     class MainWindow;
@@ -67,14 +67,14 @@ private:
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
     Preferences *preferences;
-    PreferencesWidget *prefWidget;
-    ProjectWidget *projWidget;
     QMap<QString, TrayIconCommand*> *commands;
     bool isTracking;
     bool isTakingScreenShots;
     QDateTime trackBeginning;
     QTimer screenShotTimer;    
     QShortcut *quitShortcut;
+    Clock *trackingClock;
+
     void createActions();
     void createTrayIcon();
     void fillCheckboxes();
@@ -86,6 +86,7 @@ private:
     QString createScreenShotFolder(const QString &);
     void setUpKeyShortcuts();
     QPushButton *getTrackBtn();
+    QLabel *getTimeLabel();
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -101,6 +102,7 @@ private slots:
     void shotScreen();
     void updateTrayIconToolTip(QString);
     void switchProject(Project* older);    
+    void setTimeLabel();
 };
 
 #endif // MAINWINDOW_H

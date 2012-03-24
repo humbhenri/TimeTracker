@@ -37,10 +37,10 @@ or implied, of Humberto Pinheiro.*/
 #include <QShortcut>
 #include "preferences.h"
 #include "trayiconcommand.h"
-#include "projectwidget.h"
 #include "timespan.h"
 #include "project.h"
 #include "screenshot.h"
+#include "clock.h"
 
 #define NORMAL_CLOCK_ICON ":/res/images/clock.png"
 #define OFF_CLOCK_ICON ":/res/images/clock-off.png"
@@ -57,7 +57,9 @@ MainWindow::MainWindow(QWidget *parent) :
     isTracking(false),
     isTakingScreenShots(false),
     quitShortcut(0)
-{    
+{
+    trackingClock = new Clock(this);
+
     preferences = new Preferences;
     createCommands();
     preferences->loadPreferences();
@@ -76,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     trackBeginning = QDateTime::currentDateTime();    
 
-    setUpKeyShortcuts();
+    setUpKeyShortcuts();        
 }
 
 MainWindow::~MainWindow()
@@ -202,8 +204,10 @@ void MainWindow::makeConnections() {
 
     // change tray icon tooltip with the new current project
 //    connect(prefWidget, SIGNAL(currentProjectChanged(QString)), SLOT(updateTrayIconToolTip(QString)));
-    QPushButton *trackBtn = getTrackBtn();
-    connect(trackBtn, SIGNAL(clicked()), this, SLOT(toggleTracking()));
+
+    connect(getTrackBtn(), SIGNAL(clicked()), this, SLOT(toggleTracking()));
+
+    connect(trackingClock, SIGNAL(ticked()), this, SLOT(setTimeLabel()));
 
 }
 
@@ -252,11 +256,11 @@ void MainWindow::createNewTimeSession(Project* p) {
     if (p) {
         p->addTimeTrackingSession(gap);
         // refresh project details widget
-        QComboBox *projectCombobox = projWidget->findChild<QComboBox*>("projectComboBox");
-        if (projectCombobox &&
-            p->getName() == projectCombobox->currentText()){
-            projWidget->loadProjectDetails();
-        }
+//        QComboBox *projectCombobox = projWidget->findChild<QComboBox*>("projectComboBox");
+//        if (projectCombobox &&
+//            p->getName() == projectCombobox->currentText()){
+//            projWidget->loadProjectDetails();
+//        }
     }
 }
 
@@ -336,6 +340,8 @@ void MainWindow::stopTracking()
         screenShotTimer.stop();
         QPushButton *trackBtn = getTrackBtn();
         trackBtn->setText("Start");
+        trackingClock->reset();
+        trackingClock->stop();
     }
 }
 
@@ -344,6 +350,7 @@ void MainWindow::startTracking()
     startClock();
     QPushButton *trackBtn = getTrackBtn();
     trackBtn->setText("Stop");
+    trackingClock->start();
     if (isTakingScreenShots)
         toggleScreenShots(true);
 }
@@ -355,6 +362,13 @@ void MainWindow::switchProject(Project *older)
     startTracking();
 }
 
+void MainWindow::setTimeLabel()
+{
+    QLabel *label = getTimeLabel();
+    if (label)
+        label->setText(trackingClock->getFormatted());
+}
+
 void MainWindow::setUpKeyShortcuts()
 {
     quitShortcut = new QShortcut(QKeySequence("Ctrl+Q"), this);
@@ -364,4 +378,9 @@ void MainWindow::setUpKeyShortcuts()
 QPushButton * MainWindow::getTrackBtn()
 {
     return ui->centralWidget->findChild<QPushButton*>("trackBtn");
+}
+
+QLabel *MainWindow::getTimeLabel()
+{
+    return ui->centralWidget->findChild<QLabel*>("timeLbl");
 }

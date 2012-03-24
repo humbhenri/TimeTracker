@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     genericdao.cpp \
     debugutils.cpp \
     timetrackerapp.cpp \
-    reportwidget.cpp
+    reportwidget.cpp \
+    clock.cpp
 
 HEADERS  += mainwindow.h \
     preferenceswidget.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     genericdao.h \
     debugutils.h \
     timetrackerapp.h \
-    reportwidget.h
+    reportwidget.h \
+    clock.h
 
 FORMS += mainwindow.ui \
     preferenceswidget.ui \
