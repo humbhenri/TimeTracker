@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     debugutils.cpp \
     timetrackerapp.cpp \
     reportwidget.cpp \
-    clock.cpp
+    clock.cpp \
+    projectitemdelegate.cpp
 
 HEADERS  += mainwindow.h \
     preferenceswidget.h \
@@ -39,7 +40,8 @@ HEADERS  += mainwindow.h \
     debugutils.h \
     timetrackerapp.h \
     reportwidget.h \
-    clock.h
+    clock.h \
+    projectitemdelegate.h
 
 FORMS += mainwindow.ui \
     preferenceswidget.ui \
@@ -58,6 +60,8 @@ macx-g++{
 }
 
 win32:RC_FILE  += TimeTracker.rc
+
+
 
 
 

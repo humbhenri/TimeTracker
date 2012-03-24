@@ -100,7 +100,7 @@ void ProjectWidget::fillProjectComboBox()
 {
     ui->projectComboBox->blockSignals(true);
     ui->projectComboBox->clear();
-    QStringList projects = Project::getProjects();
+    QStringList projects = Project::getProjectNames();
     QStringList::iterator it = projects.begin();
     while (it != projects.end()) {
         ui->projectComboBox->addItem(*it);

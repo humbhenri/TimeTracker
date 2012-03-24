@@ -103,6 +103,7 @@ private slots:
     void updateTrayIconToolTip(QString);
     void switchProject(Project* older);    
     void setTimeLabel();
+    void loadProjects();
 };
 
 #endif // MAINWINDOW_H

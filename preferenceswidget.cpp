@@ -84,7 +84,7 @@ void PreferencesWidget::fillProjectsCombobox()
 {
     ui->projectsComboBox->blockSignals(true);
     ui->projectsComboBox->clear();
-    QStringList projects = Project::getProjects();
+    QStringList projects = Project::getProjectNames();
     QStringList::iterator it = projects.begin();
     while (it != projects.end()) {
         ui->projectsComboBox->addItem(*it);
@@ -115,7 +115,7 @@ void PreferencesWidget::setCurrentProject(const QString &project)
 {
     ui->projectsComboBox->blockSignals(true);
     preferences->setCurrentProject(project);    
-    ui->projectsComboBox->setCurrentIndex(Project::getProjects().indexOf((project)));
+    ui->projectsComboBox->setCurrentIndex(Project::getProjectNames().indexOf((project)));
     ui->projectsComboBox->blockSignals(false);
 }
 

@@ -97,7 +97,7 @@ void GenericDaoTest::testSaveProject()
     Project dummy;
     TimeSpan ts;
     QVector<QObject*> projects = dao.select(dummy.metaObject(), "", Project::TableName);
-    QVERIFY2(projects.count() == Project::getProjects().count(), qPrintable(QString::number(projects.count())));
+    QVERIFY2(projects.count() == Project::getProjectNames().count(), qPrintable(QString::number(projects.count())));
     QVector<QObject*> timespans = dao.select(ts.metaObject(),
                                              "projectId = " + Project::getProjectByName("project 1")->property("id").toString(),
                                              TimeSpan::TableName);

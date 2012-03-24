@@ -35,12 +35,15 @@ or implied, of Humberto Pinheiro.*/
 #include <QUrl>
 #include <QDir>
 #include <QShortcut>
+#include <QListView>
+#include <QStandardItemModel>
 #include "preferences.h"
 #include "trayiconcommand.h"
 #include "timespan.h"
 #include "project.h"
 #include "screenshot.h"
 #include "clock.h"
+#include "projectitemdelegate.h"
 
 #define NORMAL_CLOCK_ICON ":/res/images/clock.png"
 #define OFF_CLOCK_ICON ":/res/images/clock-off.png"
@@ -79,6 +82,8 @@ MainWindow::MainWindow(QWidget *parent) :
     trackBeginning = QDateTime::currentDateTime();    
 
     setUpKeyShortcuts();        
+
+    loadProjects();
 }
 
 MainWindow::~MainWindow()
@@ -383,4 +388,19 @@ QPushButton * MainWindow::getTrackBtn()
 QLabel *MainWindow::getTimeLabel()
 {
     return ui->centralWidget->findChild<QLabel*>("timeLbl");
+}
+
+void MainWindow::loadProjects()
+{
+    QVector<Project*> projects = Project::getProjects();
+    QListView *listView = ui->centralWidget->findChild<QListView*>("projectsLst");
+    ProjectItemDelegate *delegate = new ProjectItemDelegate(0, this);
+    QStandardItemModel *model = new QStandardItemModel(this);
+    listView->setItemDelegate(delegate);
+    listView->setModel(model);
+    foreach(Project *p, projects) {
+        delegate->setProject(p);
+        QStandardItem *item = new QStandardItem();
+        model->appendRow(item);
+    }
 }
