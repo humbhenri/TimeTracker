@@ -35,12 +35,15 @@ or implied, of Humberto Pinheiro.*/
 #include <QUrl>
 #include <QDir>
 #include <QShortcut>
+#include <QStandardItemModel>
+#include <QStandardItem>
 #include "preferences.h"
 #include "trayiconcommand.h"
 #include "timespan.h"
 #include "project.h"
 #include "screenshot.h"
 #include "clock.h"
+#include "projectwidget.h"
 
 #define NORMAL_CLOCK_ICON ":/res/images/clock.png"
 #define OFF_CLOCK_ICON ":/res/images/clock-off.png"
@@ -64,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createCommands();
     preferences->loadPreferences();
 
-    ui->setupUi(this);
+    ui->setupUi(this);  
 
     setWindowIcon(QIcon(WINDOW_ICON));
 
@@ -209,6 +212,8 @@ void MainWindow::makeConnections() {
 
     connect(trackingClock, SIGNAL(ticked()), this, SLOT(setTimeLabel()));
 
+    QListView * projectLst = ui->centralWidget->findChild<QListView*>("projectLst");
+    connect(projectLst, SIGNAL(activated(QModelIndex)), this, SLOT(setSelectedProject(QModelIndex)));
 }
 
 void MainWindow::startClock()
@@ -367,6 +372,26 @@ void MainWindow::setTimeLabel()
     QLabel *label = getTimeLabel();
     if (label)
         label->setText(trackingClock->getFormatted());
+}
+
+void MainWindow::setSelectedProject(QModelIndex index)
+{
+    const QAbstractItemModel *model = index.model();
+    QString projectName = model->data(index).toString();
+    Project *p = Project::getProjectByName(projectName);
+    ProjectWidget *widget = ui->centralWidget->findChild<ProjectWidget*>("projectWidget");
+    widget->loadProjectDetails(p);
+}
+
+void MainWindow::fillProjectList()
+{
+    QListView *projectLst = ui->centralWidget->findChild<QListView*>("projectLst");
+    QStandardItemModel *model = new QStandardItemModel(0, 1,this);
+    projectLst->setModel( model);
+    QStringList projectNames = Project::getProjectNames();
+    foreach(QString name, projectNames) {
+        model->appendRow(new QStandardItem(name));
+    }
 }
 
 void MainWindow::setUpKeyShortcuts()

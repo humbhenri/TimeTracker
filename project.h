@@ -49,7 +49,7 @@ public:
     inline QVector<TimeSpan*> getTimeSpans() const { return timeSpans; }
     QString totalTimeSpent() const;    
     static Project* makeProject(const QString & name, const QString & description);
-    static QStringList getProjects();
+    static QStringList getProjectNames();
     static Project* getProjectByName(const QString & name);
     static Project* getProjectById(int id);
     bool save();

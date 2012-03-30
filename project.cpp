@@ -67,7 +67,7 @@ Project* Project::makeProject(const QString &name, const QString &description)
     return p;
 }
 
-QStringList Project::getProjects()
+QStringList Project::getProjectNames()
 {
     QStringList names;
     DBUtils::GenericDao dao;

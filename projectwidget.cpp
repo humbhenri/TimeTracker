@@ -39,15 +39,16 @@ or implied, of Humberto Pinheiro.*/
 
 ProjectWidget::ProjectWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ProjectWidget)
+    ui(new Ui::ProjectWidget),
+    selectedProject(0)
 {
     ui->setupUi(this);    
 
     prepareHistoryTable();
 
-    fillProjectComboBox();
+//    fillProjectComboBox();
 
-    connect(ui->projectComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(loadProjectDetails()));
+//    connect(ui->projectComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(loadProjectDetails()));
 //    connect(ui->descriptionTextEdit, SIGNAL(textChanged()), this, SLOT(saveProjectDescription()));
     ui->descriptionTextEdit->installEventFilter(this);
 }
@@ -67,9 +68,11 @@ void ProjectWidget::prepareHistoryTable()
     ui->historyTableView->setColumnWidth(0, 130);    
 }
 
-void ProjectWidget::loadProjectDetails()
+void ProjectWidget::loadProjectDetails(Project *project)
 {
-    Project *project = Project::getProjectByName(ui->projectComboBox->currentText());
+//    Project *project = Project::getProjectByName(ui->projectComboBox->currentText());
+    selectedProject = project;
+
     if (!project)
         return;
 
@@ -96,26 +99,26 @@ void ProjectWidget::loadProjectDetails()
     ui->historyTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
 
-void ProjectWidget::fillProjectComboBox()
-{
-    ui->projectComboBox->blockSignals(true);
-    ui->projectComboBox->clear();
-    QStringList projects = Project::getProjects();
-    QStringList::iterator it = projects.begin();
-    while (it != projects.end()) {
-        ui->projectComboBox->addItem(*it);
-        it++;
-    }
-    ui->projectComboBox->blockSignals(false);
-    loadProjectDetails();
-}
+//void ProjectWidget::fillProjectComboBox()
+//{
+//    ui->projectComboBox->blockSignals(true);
+//    ui->projectComboBox->clear();
+//    QStringList projects = Project::getProjectNames();
+//    QStringList::iterator it = projects.begin();
+//    while (it != projects.end()) {
+//        ui->projectComboBox->addItem(*it);
+//        it++;
+//    }
+//    ui->projectComboBox->blockSignals(false);
+//    loadProjectDetails();
+//}
 
 void ProjectWidget::saveProjectDescription()
 {
-    Project *project = Project::getProjectByName(ui->projectComboBox->currentText());
-    if (!project)
+//    Project *project = Project::getProjectByName(ui->projectComboBox->currentText());
+    if (!selectedProject)
         return;
-    project->setDescription(ui->descriptionTextEdit->document()->toPlainText());
+    selectedProject->setDescription(ui->descriptionTextEdit->document()->toPlainText());
 
 #if 0
     qDebug("ProjectWidget::saveProjectDescription %s", project->getDescription().toAscii().data());
@@ -124,7 +127,10 @@ void ProjectWidget::saveProjectDescription()
 
 void ProjectWidget::on_screenshotsPushButton_clicked()
 {
-    QString projectName = ui->projectComboBox->currentText();
+//    QString projectName = ui->projectComboBox->currentText();
+    if (!selectedProject)
+        return;
+    QString projectName = selectedProject->getName();
     QString path = QDir(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation) +
              "/" + QApplication::instance()->applicationName() + "/" +
              projectName).path();
