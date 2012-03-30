@@ -43,7 +43,7 @@
         <number>0</number>
        </property>
        <item row="0" column="0">
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="newProjectBtn">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add a new project&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>

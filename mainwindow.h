@@ -43,6 +43,7 @@ class QPushButton;
 class QLabel;
 class Clock;
 class QModelIndex;
+class CreateProjectDialog;
 
 namespace Ui {
     class MainWindow;
@@ -76,6 +77,7 @@ private:
     QTimer screenShotTimer;    
     QShortcut *quitShortcut;
     Clock *trackingClock;
+    CreateProjectDialog *newProjectDialog;
 
     void createActions();
     void createTrayIcon();
@@ -107,6 +109,8 @@ private slots:
     void setTimeLabel();
     void setSelectedProject(QModelIndex index);
     void fillProjectList();
+    void showProjectDialog();
+    void addNewProject();
 };
 
 #endif // MAINWINDOW_H

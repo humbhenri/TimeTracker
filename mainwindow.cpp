@@ -44,6 +44,7 @@ or implied, of Humberto Pinheiro.*/
 #include "screenshot.h"
 #include "clock.h"
 #include "projectwidget.h"
+#include "createprojectdialog.h"
 
 #define NORMAL_CLOCK_ICON ":/res/images/clock.png"
 #define OFF_CLOCK_ICON ":/res/images/clock-off.png"
@@ -69,6 +70,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);  
 
+    newProjectDialog = new CreateProjectDialog;
+
     setWindowIcon(QIcon(WINDOW_ICON));
 
     createActions();
@@ -82,6 +85,8 @@ MainWindow::MainWindow(QWidget *parent) :
     trackBeginning = QDateTime::currentDateTime();    
 
     setUpKeyShortcuts();        
+
+    fillProjectList();
 }
 
 MainWindow::~MainWindow()
@@ -214,6 +219,11 @@ void MainWindow::makeConnections() {
 
     QListView * projectLst = ui->centralWidget->findChild<QListView*>("projectLst");
     connect(projectLst, SIGNAL(activated(QModelIndex)), this, SLOT(setSelectedProject(QModelIndex)));
+    connect(projectLst, SIGNAL(clicked(QModelIndex)), this, SLOT(setSelectedProject(QModelIndex)));
+
+    QPushButton * btn = ui->centralWidget->findChild<QPushButton*>("newProjectBtn");
+    connect(btn, SIGNAL(clicked()), this, SLOT(showProjectDialog()));
+    connect(newProjectDialog, SIGNAL(accepted()), this, SLOT(addNewProject()));
 }
 
 void MainWindow::startClock()
@@ -387,12 +397,19 @@ void MainWindow::fillProjectList()
 {
     QListView *projectLst = ui->centralWidget->findChild<QListView*>("projectLst");
     QStandardItemModel *model = new QStandardItemModel(0, 1,this);
-    projectLst->setModel( model);
+    projectLst->setModel(model);
     QStringList projectNames = Project::getProjectNames();
     foreach(QString name, projectNames) {
         model->appendRow(new QStandardItem(name));
     }
 }
+
+void MainWindow::showProjectDialog()
+{
+    newProjectDialog->clearForms();
+    newProjectDialog->exec();
+}
+
 
 void MainWindow::setUpKeyShortcuts()
 {
@@ -408,4 +425,12 @@ QPushButton * MainWindow::getTrackBtn()
 QLabel *MainWindow::getTimeLabel()
 {
     return ui->centralWidget->findChild<QLabel*>("timeLbl");
+}
+
+void MainWindow::addNewProject()
+{
+    QString name = newProjectDialog->getName();
+    QString description = newProjectDialog->getDescription();
+    Project *project = Project::makeProject(name, description);
+    fillProjectList();
 }
