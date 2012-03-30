@@ -353,8 +353,7 @@ void MainWindow::stopTracking()
     if (isTracking) {
         stopClock();
         screenShotTimer.stop();
-        QPushButton *trackBtn = getTrackBtn();
-        trackBtn->setText("Start");
+        getTrackBtn()->setText("Start");
         trackingClock->reset();
         trackingClock->stop();
     }
@@ -391,6 +390,8 @@ void MainWindow::setSelectedProject(QModelIndex index)
     Project *p = Project::getProjectByName(projectName);
     ProjectWidget *widget = ui->centralWidget->findChild<ProjectWidget*>("projectWidget");
     widget->loadProjectDetails(p);
+    getTrackBtn()->setEnabled(true);
+
 }
 
 void MainWindow::fillProjectList()
