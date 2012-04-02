@@ -65,7 +65,8 @@ void ProjectWidget::prepareHistoryTable()
     historyModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Duration"));
     ui->historyTableView->setModel(historyModel);
     ui->historyTableView->horizontalHeader()->setStretchLastSection(true);
-    ui->historyTableView->setColumnWidth(0, 130);    
+    ui->historyTableView->setColumnWidth(0, 130);
+    ui->historyTableView->setAlternatingRowColors(true);
 }
 
 void ProjectWidget::loadProjectDetails(Project *project)
