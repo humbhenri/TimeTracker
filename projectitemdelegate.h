@@ -4,6 +4,7 @@
 #include <QAbstractItemDelegate>
 
 class Project;
+class ProjectItem;
 
 class ProjectItemDelegate : public QAbstractItemDelegate
 {
@@ -16,6 +17,7 @@ public:
     Project *getProject() const;
 private:
     Project *project;
+    ProjectItem *widget;
 };
 
 #endif // PROJECTITEMDELEGATE_H

@@ -37,6 +37,7 @@ or implied, of Humberto Pinheiro.*/
 #include <QShortcut>
 #include <QListView>
 #include <QStandardItemModel>
+#include <QStandardItem>
 #include "preferences.h"
 #include "trayiconcommand.h"
 #include "timespan.h"
@@ -44,6 +45,8 @@ or implied, of Humberto Pinheiro.*/
 #include "screenshot.h"
 #include "clock.h"
 #include "projectitemdelegate.h"
+#include "projectwidget.h"
+#include "createprojectdialog.h"
 
 #define NORMAL_CLOCK_ICON ":/res/images/clock.png"
 #define OFF_CLOCK_ICON ":/res/images/clock-off.png"
@@ -67,7 +70,9 @@ MainWindow::MainWindow(QWidget *parent) :
     createCommands();
     preferences->loadPreferences();
 
-    ui->setupUi(this);
+    ui->setupUi(this);  
+
+    newProjectDialog = new CreateProjectDialog;
 
     setWindowIcon(QIcon(WINDOW_ICON));
 
@@ -214,6 +219,13 @@ void MainWindow::makeConnections() {
 
     connect(trackingClock, SIGNAL(ticked()), this, SLOT(setTimeLabel()));
 
+    QListView * projectLst = ui->centralWidget->findChild<QListView*>("projectLst");
+    connect(projectLst, SIGNAL(activated(QModelIndex)), this, SLOT(setSelectedProject(QModelIndex)));
+    connect(projectLst, SIGNAL(clicked(QModelIndex)), this, SLOT(setSelectedProject(QModelIndex)));
+
+    QPushButton * btn = ui->centralWidget->findChild<QPushButton*>("newProjectBtn");
+    connect(btn, SIGNAL(clicked()), this, SLOT(showProjectDialog()));
+    connect(newProjectDialog, SIGNAL(accepted()), this, SLOT(addNewProject()));
 }
 
 void MainWindow::startClock()
@@ -343,8 +355,7 @@ void MainWindow::stopTracking()
     if (isTracking) {
         stopClock();
         screenShotTimer.stop();
-        QPushButton *trackBtn = getTrackBtn();
-        trackBtn->setText("Start");
+        getTrackBtn()->setText("Start");
         trackingClock->reset();
         trackingClock->stop();
     }
@@ -374,6 +385,23 @@ void MainWindow::setTimeLabel()
         label->setText(trackingClock->getFormatted());
 }
 
+void MainWindow::setSelectedProject(QModelIndex index)
+{
+    const QAbstractItemModel *model = index.model();
+    QString projectName = model->data(index).toString();
+    Project *p = Project::getProjectByName(projectName);
+    ProjectWidget *widget = ui->centralWidget->findChild<ProjectWidget*>("projectWidget");
+    widget->loadProjectDetails(p);
+    getTrackBtn()->setEnabled(true);
+
+}
+
+void MainWindow::showProjectDialog()
+{
+    newProjectDialog->clearForms();
+    newProjectDialog->exec();
+}
+
 void MainWindow::setUpKeyShortcuts()
 {
     quitShortcut = new QShortcut(QKeySequence("Ctrl+Q"), this);
@@ -393,7 +421,7 @@ QLabel *MainWindow::getTimeLabel()
 void MainWindow::loadProjects()
 {
     QVector<Project*> projects = Project::getProjects();
-    QListView *listView = ui->centralWidget->findChild<QListView*>("projectsLst");
+    QListView *listView = ui->centralWidget->findChild<QListView*>("projectLst");
     ProjectItemDelegate *delegate = new ProjectItemDelegate(0, this);
     QStandardItemModel *model = new QStandardItemModel(this);
     listView->setItemDelegate(delegate);
@@ -403,4 +431,12 @@ void MainWindow::loadProjects()
         QStandardItem *item = new QStandardItem();
         model->appendRow(item);
     }
+}
+
+void MainWindow::addNewProject()
+{
+    QString name = newProjectDialog->getName();
+    QString description = newProjectDialog->getDescription();
+    Project::makeProject(name, description);
+    loadProjects();
 }

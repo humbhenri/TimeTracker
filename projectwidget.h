@@ -47,12 +47,12 @@ public:
 private:
     Ui::ProjectWidget *ui;
     QStandardItemModel* historyModel;
+    Project *selectedProject;
     void prepareHistoryTable();
     virtual bool eventFilter(QObject *target, QEvent *event);
 
 public slots:
-    void loadProjectDetails();
-    void fillProjectComboBox();
+    void loadProjectDetails(Project *project);
     void saveProjectDescription();
 
 private slots:

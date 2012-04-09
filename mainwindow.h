@@ -32,6 +32,7 @@ or implied, of Humberto Pinheiro.*/
 #include <QMap>
 #include <QDateTime>
 #include <QTimer>
+#include <QModelIndex>
 
 class QCloseEvent;
 class Preferences;
@@ -41,6 +42,8 @@ class QShortcut;
 class QPushButton;
 class QLabel;
 class Clock;
+class QModelIndex;
+class CreateProjectDialog;
 
 namespace Ui {
     class MainWindow;
@@ -74,6 +77,7 @@ private:
     QTimer screenShotTimer;    
     QShortcut *quitShortcut;
     Clock *trackingClock;
+    CreateProjectDialog *newProjectDialog;
 
     void createActions();
     void createTrayIcon();
@@ -86,7 +90,7 @@ private:
     QString createScreenShotFolder(const QString &);
     void setUpKeyShortcuts();
     QPushButton *getTrackBtn();
-    QLabel *getTimeLabel();
+    QLabel *getTimeLabel();    
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -104,6 +108,9 @@ private slots:
     void switchProject(Project* older);    
     void setTimeLabel();
     void loadProjects();
+    void setSelectedProject(QModelIndex index);
+    void showProjectDialog();
+    void addNewProject();
 };
 
 #endif // MAINWINDOW_H

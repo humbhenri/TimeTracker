@@ -1,4 +1,5 @@
 #include "projectitemdelegate.h"
+#include "projectitem.h"
 #include "project.h"
 #include <QPainter>
 #include <QBrush>
@@ -7,6 +8,7 @@ ProjectItemDelegate::ProjectItemDelegate(Project *p, QObject *parent) :
     project(p),
     QAbstractItemDelegate(parent)
 {
+    widget = new ProjectItem(0);
 }
 
 void ProjectItemDelegate::setProject(Project *p)
@@ -32,7 +34,7 @@ void ProjectItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         else
             painter->fillRect(option.rect, option.palette.light());
     }
-    painter->drawText(10, 10, project->getName());
+    widget->repaint();
 }
 
 QSize ProjectItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const

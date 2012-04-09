@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     timetrackerapp.cpp \
     reportwidget.cpp \
     clock.cpp \
-    projectitemdelegate.cpp
+    projectitemdelegate.cpp \
+    projectitem.cpp
 
 HEADERS  += mainwindow.h \
     preferenceswidget.h \
@@ -41,13 +42,15 @@ HEADERS  += mainwindow.h \
     timetrackerapp.h \
     reportwidget.h \
     clock.h \
-    projectitemdelegate.h
+    projectitemdelegate.h \
+    projectitem.h
 
 FORMS += mainwindow.ui \
     preferenceswidget.ui \
     projectwidget.ui \
     createprojectdialog.ui \
-    reportwidget.ui
+    reportwidget.ui \
+    projectitem.ui
 
 RESOURCES += \
     res.qrc
@@ -60,6 +63,9 @@ macx-g++{
 }
 
 win32:RC_FILE  += TimeTracker.rc
+
+
+
 
 
 
