@@ -49,11 +49,9 @@ private:
     QStandardItemModel* historyModel;
     Project *selectedProject;
     void prepareHistoryTable();
-    virtual bool eventFilter(QObject *target, QEvent *event);
 
 public slots:
     void loadProjectDetails(Project *project);
-    void saveProjectDescription();
 
 private slots:
     void on_screenshotsPushButton_clicked();

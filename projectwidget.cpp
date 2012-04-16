@@ -45,12 +45,6 @@ ProjectWidget::ProjectWidget(QWidget *parent) :
     ui->setupUi(this);    
 
     prepareHistoryTable();
-
-//    fillProjectComboBox();
-
-//    connect(ui->projectComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(loadProjectDetails()));
-//    connect(ui->descriptionTextEdit, SIGNAL(textChanged()), this, SLOT(saveProjectDescription()));
-    ui->descriptionTextEdit->installEventFilter(this);
 }
 
 ProjectWidget::~ProjectWidget()
@@ -77,7 +71,6 @@ void ProjectWidget::loadProjectDetails(Project *project)
     if (!project)
         return;
 
-    ui->descriptionTextEdit->setText( project->getDescription());
     ui->timeSpentLabel->setText(project->totalTimeSpent());
 
     historyModel->removeRows(0, historyModel->rowCount());
@@ -100,35 +93,8 @@ void ProjectWidget::loadProjectDetails(Project *project)
     ui->historyTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
 
-//void ProjectWidget::fillProjectComboBox()
-//{
-//    ui->projectComboBox->blockSignals(true);
-//    ui->projectComboBox->clear();
-//    QStringList projects = Project::getProjectNames();
-//    QStringList::iterator it = projects.begin();
-//    while (it != projects.end()) {
-//        ui->projectComboBox->addItem(*it);
-//        it++;
-//    }
-//    ui->projectComboBox->blockSignals(false);
-//    loadProjectDetails();
-//}
-
-void ProjectWidget::saveProjectDescription()
-{
-//    Project *project = Project::getProjectByName(ui->projectComboBox->currentText());
-    if (!selectedProject)
-        return;
-    selectedProject->setDescription(ui->descriptionTextEdit->document()->toPlainText());
-
-#if 0
-    qDebug("ProjectWidget::saveProjectDescription %s", project->getDescription().toAscii().data());
-#endif
-}
-
 void ProjectWidget::on_screenshotsPushButton_clicked()
 {
-//    QString projectName = ui->projectComboBox->currentText();
     if (!selectedProject)
         return;
     QString projectName = selectedProject->getName();
@@ -137,13 +103,4 @@ void ProjectWidget::on_screenshotsPushButton_clicked()
              projectName).path();
     qDebug(path.toAscii().data());
     QDesktopServices::openUrl(QUrl("file:///" + path));
-}
-
-bool ProjectWidget::eventFilter(QObject *target, QEvent *event)
-{
-    if (target == ui->descriptionTextEdit && event->type() == QEvent::FocusOut) {
-        saveProjectDescription();
-        return true;
-    }
-    return false;
 }
