@@ -376,7 +376,7 @@ void MainWindow::switchProject(Project *older)
 {
     if (isTracking)
         createNewTimeSession(older);
-    startTracking();
+    stopTracking();
 }
 
 void MainWindow::setTimeLabel()
@@ -394,7 +394,7 @@ void MainWindow::setSelectedProject(QModelIndex index)
     ProjectWidget *widget = ui->centralWidget->findChild<ProjectWidget*>("projectWidget");
     widget->loadProjectDetails(p);
     getTrackBtn()->setEnabled(true);
-
+    preferences->setCurrentProject(projectName);
 }
 
 void MainWindow::showProjectDialog()
