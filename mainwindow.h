@@ -90,7 +90,8 @@ private:
     QString createScreenShotFolder(const QString &);
     void setUpKeyShortcuts();
     QPushButton *getTrackBtn();
-    QLabel *getTimeLabel();    
+    QLabel *getTimeLabel();
+    void prepareProjectListView();
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);

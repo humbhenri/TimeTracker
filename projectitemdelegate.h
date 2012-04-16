@@ -3,21 +3,15 @@
 
 #include <QAbstractItemDelegate>
 
-class Project;
-class ProjectItem;
-
 class ProjectItemDelegate : public QAbstractItemDelegate
 {
     Q_OBJECT
 public:
-    ProjectItemDelegate(Project *p = 0, QObject *parent = 0);
+    ProjectItemDelegate(QObject *parent = 0);
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void setProject(Project *p);
-    Project *getProject() const;
+    enum datarole {nameTextRole = Qt::UserRole + 100};
 private:
-    Project *project;
-    ProjectItem *widget;
 };
 
 #endif // PROJECTITEMDELEGATE_H

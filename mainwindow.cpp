@@ -88,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setUpKeyShortcuts();        
 
+    prepareProjectListView();
     loadProjects();
 }
 
@@ -418,25 +419,31 @@ QLabel *MainWindow::getTimeLabel()
     return ui->centralWidget->findChild<QLabel*>("timeLbl");
 }
 
-void MainWindow::loadProjects()
-{
-    QVector<Project*> projects = Project::getProjects();
-    QListView *listView = ui->centralWidget->findChild<QListView*>("projectLst");
-    ProjectItemDelegate *delegate = new ProjectItemDelegate(0, this);
-    QStandardItemModel *model = new QStandardItemModel(this);
-    listView->setItemDelegate(delegate);
-    listView->setModel(model);
-    foreach(Project *p, projects) {
-        delegate->setProject(p);
-        QStandardItem *item = new QStandardItem();
-        model->appendRow(item);
-    }
-}
-
 void MainWindow::addNewProject()
 {
     QString name = newProjectDialog->getName();
     QString description = newProjectDialog->getDescription();
     Project::makeProject(name, description);
     loadProjects();
+}
+
+void MainWindow::prepareProjectListView()
+{
+    QListView *view = ui->centralWidget->findChild<QListView*>("projectLst");
+    QStandardItemModel *model = new QStandardItemModel;
+    view->setItemDelegate(new ProjectItemDelegate);
+    view->setModel(model);
+}
+
+
+void MainWindow::loadProjects()
+{
+    QListView *view = ui->centralWidget->findChild<QListView*>("projectLst");
+    QStandardItemModel *model = static_cast<QStandardItemModel*>(view->model());
+    QVector<Project*> projects = Project::getProjects();
+    foreach(Project *p, projects) {
+        QStandardItem *item = new QStandardItem();
+        item->setData(p->getName(), ProjectItemDelegate::nameTextRole);
+        model->appendRow(item);
+    }
 }
