@@ -389,7 +389,7 @@ void MainWindow::setTimeLabel()
 void MainWindow::setSelectedProject(QModelIndex index)
 {
     const QAbstractItemModel *model = index.model();
-    QString projectName = model->data(index).toString();
+    QString projectName = model->data(index, ProjectItemDelegate::nameTextRole).toString();
     Project *p = Project::getProjectByName(projectName);
     ProjectWidget *widget = ui->centralWidget->findChild<ProjectWidget*>("projectWidget");
     widget->loadProjectDetails(p);
