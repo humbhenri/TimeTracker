@@ -132,31 +132,55 @@
      </widget>
     </item>
     <item row="0" column="0">
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
       </property>
-      <widget class="QListView" name="projectLst">
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-       <property name="lineWidth">
-        <number>1</number>
-       </property>
-       <property name="alternatingRowColors">
-        <bool>false</bool>
-       </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Projects</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QSplitter" name="splitter">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <widget class="QListView" name="projectLst">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <property name="lineWidth">
+            <number>1</number>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="ProjectWidget" name="projectWidget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
       </widget>
-      <widget class="ProjectWidget" name="projectWidget" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Report</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="ReportWidget" name="reportWidget" native="true"/>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -170,6 +194,12 @@
    <class>ProjectWidget</class>
    <extends>QWidget</extends>
    <header>projectwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ReportWidget</class>
+   <extends>QWidget</extends>
+   <header>reportwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
