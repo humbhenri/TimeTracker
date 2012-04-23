@@ -54,9 +54,10 @@ ProjectWidget::~ProjectWidget()
 
 void ProjectWidget::prepareHistoryTable()
 {
-    historyModel = new QStandardItemModel(0, 2, this);
-    historyModel->setHeaderData(0, Qt::Horizontal, QObject::tr("Beginning"));
-    historyModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Duration"));
+    historyModel = new QStandardItemModel(0, 3, this);
+    historyModel->setHeaderData(0, Qt::Horizontal, QObject::tr("Start"));
+    historyModel->setHeaderData(1, Qt::Horizontal, QObject::tr("End"));
+    historyModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Duration"));
     ui->historyTableView->setModel(historyModel);
     ui->historyTableView->horizontalHeader()->setStretchLastSection(true);
     ui->historyTableView->setColumnWidth(0, 130);
@@ -65,7 +66,6 @@ void ProjectWidget::prepareHistoryTable()
 
 void ProjectWidget::loadProjectDetails(Project *project)
 {
-//    Project *project = Project::getProjectByName(ui->projectComboBox->currentText());
     selectedProject = project;
 
     if (!project)
@@ -83,9 +83,12 @@ void ProjectWidget::loadProjectDetails(Project *project)
         TimeSpan *ts = it.previous();
         QStandardItem *beginning = new QStandardItem(ts->getStart().toString("MMM dd yyyy hh:mm:ss"));
         beginning->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        QStandardItem *end = new QStandardItem(ts->getEnd().toString("MMM dd yyyy hh:mm:ss"));
+        end->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         QStandardItem *duration = new QStandardItem(ts->duration());
         duration->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         items.append(beginning);
+        items.append(end);
         items.append(duration);
         historyModel->appendRow(items);
         items.clear();        

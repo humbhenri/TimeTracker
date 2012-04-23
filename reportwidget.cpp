@@ -39,7 +39,6 @@ void ReportWidget::fillTableReport()
     reportTableModel->removeRows(0, reportTableModel->rowCount());
     QList<QStandardItem*> items;
 
-    // Get timespans beginning at the chosen date, with the respective projects, and append them
     QVector<TimeSpan*> timespans = TimeSpan::findAllByDate(ui->dateEdit->date());
     QMap<int, Project*> projects;
     foreach (TimeSpan* timespan, timespans) {
