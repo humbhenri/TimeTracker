@@ -33,6 +33,11 @@ or implied, of Humberto Pinheiro.*/
 
 const QString Project::TableName = "project";
 
+bool projectPtrLessThan(const Project *p1, const Project *p2)
+ {
+     return p1->getName() < p2->getName();
+ }
+
 Project::Project(QObject *parent) :
     QObject(parent), lastModified(QDateTime::currentDateTime()), created(QDateTime::currentDateTime())
 {
@@ -159,5 +164,6 @@ QVector<Project *> Project::getProjects()
         projects << p;
     }
 
+    qSort(projects.begin(), projects.end(), projectPtrLessThan);
     return projects;
 }
