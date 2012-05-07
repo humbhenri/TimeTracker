@@ -196,25 +196,12 @@ void MainWindow::makeConnections() {
     if(donateBtn)
         connect(donateBtn, SIGNAL(clicked()), this, SLOT(openPaypalPage()));
 
-    QPushButton *ok = ui->centralWidget->findChild<QPushButton*>("okPushButton");
-    QPushButton *cancel = ui->centralWidget->findChild<QPushButton*>("cancelPushButton");
-
-    connect(ok, SIGNAL(clicked()), this, SLOT(setPreferences()));
-    connect(ok, SIGNAL(clicked()), this, SLOT(hide()));
-
-
-    connect(cancel, SIGNAL(clicked()), this, SLOT(hide()));
-
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
              this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-
 
     connect(preferences, SIGNAL(projectChanged(Project*)), this, SLOT(switchProject(Project*)));
 
     connect(&screenShotTimer, SIGNAL(timeout()), this, SLOT(shotScreen()));
-
-    // change tray icon tooltip with the new current project
-//    connect(prefWidget, SIGNAL(currentProjectChanged(QString)), SLOT(updateTrayIconToolTip(QString)));
 
     connect(getTrackBtn(), SIGNAL(clicked()), this, SLOT(toggleTracking()));
 

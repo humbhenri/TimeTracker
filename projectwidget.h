@@ -54,7 +54,6 @@ public slots:
     void loadProjectDetails(Project *project);
 
 private slots:
-    void on_screenshotsPushButton_clicked();
 };
 
 #endif // PROJECTWIDGET_H

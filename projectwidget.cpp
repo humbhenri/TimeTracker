@@ -95,15 +95,3 @@ void ProjectWidget::loadProjectDetails(Project *project)
     }
     ui->historyTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
-
-void ProjectWidget::on_screenshotsPushButton_clicked()
-{
-    if (!selectedProject)
-        return;
-    QString projectName = selectedProject->getName();
-    QString path = QDir(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation) +
-             "/" + QApplication::instance()->applicationName() + "/" +
-             projectName).path();
-    qDebug(path.toAscii().data());
-    QDesktopServices::openUrl(QUrl("file:///" + path));
-}
