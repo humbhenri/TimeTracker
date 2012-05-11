@@ -74,7 +74,6 @@ private:
     bool isTracking;
     bool isTakingScreenShots;
     QDateTime trackBeginning;
-    QTimer screenShotTimer;    
     QShortcut *quitShortcut;
     Clock *trackingClock;
     CreateProjectDialog *newProjectDialog;
@@ -83,15 +82,19 @@ private:
     void createTrayIcon();
     void fillCheckboxes();
     void makeConnections();
-    void createCommands();
+    void createTrayIconCommands();
     void createNewTimeSession();
     void createNewTimeSession(Project*);
     Project *getCurrentProject();
     QString createScreenShotFolder(const QString &);
-    void setUpKeyShortcuts();
+    void setupKeyboardShortcuts();
     QPushButton *getTrackBtn();
     QLabel *getTimeLabel();
     void prepareProjectListView();
+    void setupUI();
+    void setTrayIconTrackingMode();
+    void resetTracking();
+    void setTrayIconOffMode();
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -103,8 +106,6 @@ private slots:
     void stopTracking();
     void startTracking();
     void openPaypalPage();
-    void toggleScreenShots(bool);
-    void shotScreen();
     void updateTrayIconToolTip(QString);
     void switchProject(Project* older);    
     void setTimeLabel();

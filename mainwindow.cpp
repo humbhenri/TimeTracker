@@ -59,36 +59,17 @@ or implied, of Humberto Pinheiro.*/
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    screenShotTimer(this),
     isTracking(false),
     isTakingScreenShots(false),
-    quitShortcut(0)
+    quitShortcut(0),
+    trackingClock(new Clock(this)),
+    newProjectDialog(new CreateProjectDialog),
+    trackBeginning(QDateTime::currentDateTime()),
+    preferences(new Preferences)
 {
-    trackingClock = new Clock(this);
-
-    preferences = new Preferences;
-    createCommands();
+    createTrayIconCommands();
     preferences->loadPreferences();
-
-    ui->setupUi(this);  
-
-    newProjectDialog = new CreateProjectDialog;
-
-    setWindowIcon(QIcon(WINDOW_ICON));
-
-    createActions();
-
-    createTrayIcon();
-
-    makeConnections();
-
-    trayIcon->show();
-
-    trackBeginning = QDateTime::currentDateTime();    
-
-    setUpKeyShortcuts();        
-
-    prepareProjectListView();
+    setupUI();
     loadProjects();
 }
 
@@ -152,13 +133,12 @@ void MainWindow::createTrayIcon()
     trayIconMenu->addAction(restoreAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
-
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->setIcon(QIcon(OFF_CLOCK_ICON));
     Project *currentProject = getCurrentProject();
     trayIcon->setToolTip(isTracking ? (currentProject ? currentProject->getName() : TRACKING_ON) : TRACKING_OFF);
-
+    trayIcon->show();
 }
 
 void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
@@ -201,8 +181,6 @@ void MainWindow::makeConnections() {
 
     connect(preferences, SIGNAL(projectChanged(Project*)), this, SLOT(switchProject(Project*)));
 
-    connect(&screenShotTimer, SIGNAL(timeout()), this, SLOT(shotScreen()));
-
     connect(getTrackBtn(), SIGNAL(clicked()), this, SLOT(toggleTracking()));
 
     connect(trackingClock, SIGNAL(ticked()), this, SLOT(setTimeLabel()));
@@ -219,33 +197,26 @@ void MainWindow::makeConnections() {
 void MainWindow::startClock()
 {
     isTracking = true;
-    trayIcon->setIcon(QIcon(NORMAL_CLOCK_ICON));
-    Project *currentProject = getCurrentProject();
-    trayIcon->setToolTip(currentProject ? currentProject->getName() : TRACKING_ON);
-
-    trackBeginning = QDateTime::currentDateTime();
+    setTrayIconTrackingMode();
+    resetTracking();
 }
 
 void MainWindow::stopClock()
 {
     createNewTimeSession();
-
     isTracking = false;
-    trayIcon->setIcon(QIcon(OFF_CLOCK_ICON));
-    trayIcon->setToolTip(TRACKING_OFF);
+    setTrayIconOffMode();
 }
 
 void MainWindow::toggleTracking()
 {    
-    if (isTracking) {
+    if (isTracking)
         stopTracking();
-    }
-    else {
+    else
         startTracking();
-    }
 }
 
-void MainWindow::createCommands()
+void MainWindow::createTrayIconCommands()
 {
     commands = new QMap<QString, TrayIconCommand*>;
     commands->insert(QString("Show main window"),new TrayIconCommand(this, &MainWindow::showNormal));
@@ -253,6 +224,7 @@ void MainWindow::createCommands()
     commands->insert(QString("Do Nothing"), new TrayIconCommand(this, &MainWindow::doNothing));
     commands->insert(QString("Toggle Tracking"), new TrayIconCommand(this, &MainWindow::toggleTracking));
     preferences->setCommands(commands);
+    createActions();
 }
 
 void MainWindow::createNewTimeSession(Project* p) {
@@ -260,12 +232,6 @@ void MainWindow::createNewTimeSession(Project* p) {
     TimeSpan * gap = new TimeSpan(trackBeginning, currentTime);
     if (p) {
         p->addTimeTrackingSession(gap);
-        // refresh project details widget
-//        QComboBox *projectCombobox = projWidget->findChild<QComboBox*>("projectComboBox");
-//        if (projectCombobox &&
-//            p->getName() == projectCombobox->currentText()){
-//            projWidget->loadProjectDetails();
-//        }
     }
 }
 
@@ -274,7 +240,6 @@ void MainWindow::createNewTimeSession()
     createNewTimeSession(getCurrentProject());
 }
 
-// open a web page with the paypal url asking for a donation using the defaul web browser
 void MainWindow::openPaypalPage()
 {
     QDesktopServices::openUrl(QUrl(PAYPAL_URL));
@@ -283,54 +248,6 @@ void MainWindow::openPaypalPage()
 Project* MainWindow::getCurrentProject()
 {
     return Project::getProjectByName(preferences->getCurrentProject());
-}
-
-void MainWindow::toggleScreenShots(bool enabled)
-{
-    isTakingScreenShots = enabled;
-    if (isTakingScreenShots && isTracking) {
-//        QComboBox *screenComboBox = prefWidget->findChild<QComboBox*>("screenComboBox");
-//        if (screenComboBox) {
-//            QString text = screenComboBox->currentText();
-//            int intervalSeconds = 0;
-//            if (text == "5s") intervalSeconds = 5;
-//            else if (text == "30s") intervalSeconds = 30;
-//            else if (text == "1min") intervalSeconds = 60;
-//            else if (text == "5min") intervalSeconds = 300;
-//            screenShotTimer.stop();
-//            screenShotTimer.start(intervalSeconds * 1000);
-//        }
-    }
-    else {
-        screenShotTimer.stop();
-    }
-}
-
-// If not exists a folder with the current project name then create one
-QString MainWindow::createScreenShotFolder(const QString &projectName)
-{
-    QDir dir(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation) +
-             "/" + QApplication::instance()->applicationName() + "/" +
-             projectName);
-    if (!dir.exists()) {
-        qDebug("Dir %s doesn't exists", dir.path().toAscii().data());
-        if (!dir.mkdir(dir.path()))
-            qDebug("Error: cannot create dir %s", dir.path().toAscii().data());
-    }
-    return dir.path();
-}
-
-void MainWindow::shotScreen()
-{
-    QString currentProjectName = preferences->getCurrentProject();
-    if (currentProjectName.isEmpty())
-        return;
-
-    QString path = createScreenShotFolder(currentProjectName) + "/" +
-                   QDateTime::currentDateTime().toString("yyyyMMddhhmmss") +
-                   ".png";
-
-    ScreenShot::saveNewDesktopScreenshot(path);
 }
 
 void MainWindow::updateTrayIconToolTip(QString txt)
@@ -342,7 +259,6 @@ void MainWindow::stopTracking()
 {
     if (isTracking) {
         stopClock();
-        screenShotTimer.stop();
         getTrackBtn()->setText("Start");
         trackingClock->reset();
         trackingClock->stop();
@@ -355,8 +271,6 @@ void MainWindow::startTracking()
     QPushButton *trackBtn = getTrackBtn();
     trackBtn->setText("Stop");
     trackingClock->start();
-    if (isTakingScreenShots)
-        toggleScreenShots(true);
 }
 
 void MainWindow::switchProject(Project *older)
@@ -390,7 +304,7 @@ void MainWindow::showProjectDialog()
     newProjectDialog->exec();
 }
 
-void MainWindow::setUpKeyShortcuts()
+void MainWindow::setupKeyboardShortcuts()
 {
     quitShortcut = new QShortcut(QKeySequence("Ctrl+Q"), this);
     connect(quitShortcut, SIGNAL(activated()), qApp, SLOT(quit()));
@@ -433,4 +347,31 @@ void MainWindow::loadProjects()
         item->setData(p->getName(), ProjectItemDelegate::nameTextRole);
         model->appendRow(item);
     }
+}
+
+void MainWindow::setupUI()
+{
+    ui->setupUi(this);
+    setWindowIcon(QIcon(WINDOW_ICON));
+    createTrayIcon();
+    makeConnections();
+    setupKeyboardShortcuts();
+    prepareProjectListView();
+}
+
+void MainWindow::setTrayIconTrackingMode()
+{
+    trayIcon->setIcon(QIcon(NORMAL_CLOCK_ICON));
+    trayIcon->setToolTip(getCurrentProject() ? getCurrentProject()->getName() : TRACKING_ON);
+}
+
+void MainWindow::resetTracking()
+{
+    trackBeginning = QDateTime::currentDateTime();
+}
+
+void MainWindow::setTrayIconOffMode()
+{
+    trayIcon->setIcon(QIcon(OFF_CLOCK_ICON));
+    trayIcon->setToolTip(TRACKING_OFF);
 }
