@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QVariant>
 #include <QSqlDatabase>
+#include <QSqlError>
 
 namespace DBUtils {
 
@@ -25,6 +26,8 @@ public:
     static bool init() { QSqlDatabase::cloneDatabase(QSqlDatabase::database(), CONNECTION_NAME); return true; }
 
 signals:
+    void finished();
+    void error(QSqlError);
 
 public slots:
 

@@ -54,10 +54,13 @@ bool GenericDao::insertOrUpdate(QObject *dto, QString tableName, QString fkName,
     foreach (QVariant value, values)
         query.addBindValue(value);
     bool ok = query.exec();
+    if (!ok)
+        emit error(query.lastError());
     if (ok && !dto->property("id").isValid()) {
         dto->setProperty("id", query.lastInsertId());
     }
 
+    emit finished();
     return ok;
 }
 
@@ -68,6 +71,9 @@ bool GenericDao::remove(QObject *dto, QString tableName)
     query.prepare("DELETE FROM " + tableName + " WHERE id = ?");
     query.addBindValue(dto->property("id"));
     bool ok = query.exec();
+    if (!ok)
+        emit error(query.lastError());
+    emit finished();
     return ok;
 }
 
@@ -80,6 +86,8 @@ QObject * GenericDao::findById(int id, const QMetaObject *metaObject, QString ta
     query.prepare("SELECT * FROM " + tableName + " WHERE id = ? ");
     query.addBindValue(QVariant(id));
     bool ok = query.exec();
+    if (!ok)
+        emit error(query.lastError());
     if ( ok ) {
         while ( query.next() ) {
             QSqlRecord rec = query.record();
@@ -88,11 +96,11 @@ QObject * GenericDao::findById(int id, const QMetaObject *metaObject, QString ta
                 obj->setProperty(qPrintable(field), rec.value(field));
             }
         }
+        emit finished();
         return obj;
     }
-    else {
-        return 0;
-    }
+    emit finished();
+    return 0;
 }
 
 
@@ -114,7 +122,11 @@ QVector<QObject*> GenericDao::select(const QMetaObject *metaObject,QString where
             results << obj;
         }
     }
+    else {
+        emit error(query.lastError());
+    }
 
+    emit finished();
     return results;
 }
 
