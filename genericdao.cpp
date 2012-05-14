@@ -10,6 +10,10 @@
 
 namespace DBUtils {
 
+const bool GenericDao::__init = init();
+
+const QString GenericDao::CONNECTION_NAME = "thread";
+
 GenericDao::GenericDao(QObject *parent) :
     QObject(parent)
 {
@@ -44,7 +48,7 @@ bool GenericDao::insertOrUpdate(QObject *dto, QString tableName, QString fkName,
     QStringList placeHolders;
     for ( int i=0; i<valuesCount; i++) placeHolders << "?";
 
-    QSqlQuery query;    
+    QSqlQuery query(QSqlDatabase::database(CONNECTION_NAME));
     query.prepare("REPLACE INTO " + tableName + " (" + names.join(",") + ") " +
                   "VALUES (" + placeHolders.join(",") + ") ");
     foreach (QVariant value, values)
@@ -60,7 +64,7 @@ bool GenericDao::insertOrUpdate(QObject *dto, QString tableName, QString fkName,
 
 bool GenericDao::remove(QObject *dto, QString tableName)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(CONNECTION_NAME));
     query.prepare("DELETE FROM " + tableName + " WHERE id = ?");
     query.addBindValue(dto->property("id"));
     bool ok = query.exec();
@@ -72,7 +76,7 @@ QObject * GenericDao::findById(int id, const QMetaObject *metaObject, QString ta
     QObject * obj = metaObject->newInstance();
     if ( !obj )
         return obj;
-    QSqlQuery query(QSqlDatabase::database());
+    QSqlQuery query(QSqlDatabase::database(CONNECTION_NAME));
     query.prepare("SELECT * FROM " + tableName + " WHERE id = ? ");
     query.addBindValue(QVariant(id));
     bool ok = query.exec();
@@ -95,7 +99,7 @@ QObject * GenericDao::findById(int id, const QMetaObject *metaObject, QString ta
 QVector<QObject*> GenericDao::select(const QMetaObject *metaObject,QString where, QString tableName)
 {
     QVector<QObject*> results;
-    QSqlQuery query(QSqlDatabase::database());
+    QSqlQuery query(QSqlDatabase::database(CONNECTION_NAME));
     bool ok = query.exec("SELECT * FROM " + tableName + " WHERE " + (where.isEmpty()?"1=1":where));
     if ( ok ) {
         while ( query.next() ) {
@@ -111,21 +115,19 @@ QVector<QObject*> GenericDao::select(const QMetaObject *metaObject,QString where
         }
     }
 
-//    qDebug(qPrintable(query.lastQuery()));
-
     return results;
 }
 
 
 bool GenericDao::lastOperationSuccess()
 {
-    return QSqlDatabase::database().lastError().type() == QSqlError::NoError;
+    return QSqlDatabase::database(CONNECTION_NAME).lastError().type() == QSqlError::NoError;
 }
 
 
 QString GenericDao::lastError()
 {
-    return QSqlDatabase::database().lastError().text();
+    return QSqlDatabase::database(CONNECTION_NAME).lastError().text();
 }
 
 }
