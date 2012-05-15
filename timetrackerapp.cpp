@@ -37,8 +37,10 @@ void TimeTrackerApp::initDB()
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(path);
     db.open();
-    QSqlQuery query("create table project(id integer primary key, name text, description text, created text, lastModified text)");
-    QSqlQuery query2("create table timespan(id integer primary key, start text, end text, projectId integer, FOREIGN KEY(projectId) REFERENCES project(id))");
+    QSqlQuery ("create table project(id integer primary key, name text, description text, created text, lastModified text)");
+    QSqlQuery ("create table timespan(id integer primary key, start text, end text, projectId integer, FOREIGN KEY(projectId) REFERENCES project(id))");
+    QSqlQuery ("create index project_id ON project (id)");
+    QSqlQuery ("create index timespan_id ON timespan (id)");
 }
 
 void TimeTrackerApp::closeDB()
