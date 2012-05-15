@@ -289,6 +289,7 @@ void MainWindow::setTimeLabel()
 
 void MainWindow::setSelectedProject(QModelIndex index)
 {
+    setCursor(Qt::WaitCursor);
     const QAbstractItemModel *model = index.model();
     QString projectName = model->data(index, ProjectItemDelegate::nameTextRole).toString();
     Project *p = Project::getProjectByName(projectName);
@@ -296,6 +297,7 @@ void MainWindow::setSelectedProject(QModelIndex index)
     widget->loadProjectDetails(p);
     getTrackBtn()->setEnabled(true);
     preferences->setCurrentProject(projectName);
+    setCursor(Qt::ArrowCursor);
 }
 
 void MainWindow::showProjectDialog()
