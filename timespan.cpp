@@ -136,23 +136,6 @@ TimeSpan& TimeSpan::operator =(const TimeSpan & other)
     return *this;
 }
 
-QDomElement TimeSpan::toNode(QDomDocument & d)
-{
-    QDomElement node = d.createElement("timeSpan");
-    node.setAttribute("start", start.toString(DateFormat));
-    node.setAttribute("end", end.toString(DateFormat));
-    return node;
-}
-
-TimeSpan * TimeSpan::fromNode(const QDomElement &e)
-{
-    if (!e.isNull() && e.tagName() == "timeSpan") {
-        return new TimeSpan(QDateTime::fromString(e.attribute("start", ""), DateFormat),
-                        QDateTime::fromString(e.attribute("end", ""), DateFormat));
-    }
-    return new TimeSpan(QDateTime::currentDateTime(), QDateTime::currentDateTime());
-}
-
 bool TimeSpan::operator ==(const TimeSpan &other)
 {
     return this->start == other.start &&
