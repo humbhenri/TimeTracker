@@ -29,6 +29,7 @@ or implied, of Humberto Pinheiro.*/
 #include "project.h"
 #include "timespan.h"
 #include "project.h"
+#include "prettydate.h"
 #include <QList>
 #include <QStandardItemModel>
 #include <QStandardItem>
@@ -81,9 +82,9 @@ void ProjectWidget::loadProjectDetails(Project *project)
     QList<QStandardItem*> items;
     while (it.hasPrevious()) {
         TimeSpan *ts = it.previous();
-        QStandardItem *beginning = new QStandardItem(ts->getStart().toString("MMM dd yyyy hh:mm:ss"));
+        QStandardItem *beginning = new QStandardItem(PrettyDate::prettify(ts->getStart()));
         beginning->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        QStandardItem *end = new QStandardItem(ts->getEnd().toString("MMM dd yyyy hh:mm:ss"));
+        QStandardItem *end = new QStandardItem(PrettyDate::prettify(ts->getEnd()));
         end->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         QStandardItem *duration = new QStandardItem(ts->duration());
         duration->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);

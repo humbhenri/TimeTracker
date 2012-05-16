@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     reportwidget.cpp \
     clock.cpp \
     projectitemdelegate.cpp \
-    projectitem.cpp
+    projectitem.cpp \
+    prettydate.cpp
 
 HEADERS  += mainwindow.h \
     preferenceswidget.h \
@@ -43,7 +44,8 @@ HEADERS  += mainwindow.h \
     reportwidget.h \
     clock.h \
     projectitemdelegate.h \
-    projectitem.h
+    projectitem.h \
+    prettydate.h
 
 FORMS += mainwindow.ui \
     preferenceswidget.ui \
