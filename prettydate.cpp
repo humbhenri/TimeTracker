@@ -16,8 +16,8 @@ QString PrettyDate::prettify(QDateTime aDateTime)
     else if (secsDiff < 3600)
         return QString::number(secsDiff/60) + MINUTES_AGO;
     else if (secsDiff < 7200)
-        return HOUR_AGO;
+        return aDateTime.toString("hh:mm:ss");
     else if (secsDiff < 86400)
-        return QString::number(secsDiff/3600) + HOURS_AGO;
+        return aDateTime.toString("hh:mm:ss");
     return aDateTime.toString("dd/MM/yyyy hh:mm:ss");
 }
