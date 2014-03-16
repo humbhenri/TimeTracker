@@ -94,5 +94,5 @@ void ProjectWidget::loadProjectDetails(Project *project)
         historyModel->appendRow(items);
         items.clear();        
     }
-    ui->historyTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+//    ui->historyTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }

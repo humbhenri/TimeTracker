@@ -32,6 +32,7 @@ or implied, of Humberto Pinheiro.*/
 #include <QDesktopServices>
 #include <QDir>
 #include <QApplication>
+#include <QStandardPaths>
 
 QString Preferences::SINGLE_CLICK = QString("Preferences/SingleClickCommand");
 QString Preferences::DOUBLE_CLICK = QString("Preferences/DoubleClickCommand");
@@ -119,7 +120,7 @@ void Preferences::setCommands(QMap<QString,TrayIconCommand*> *map)
 
 QString Preferences::getProjectsXMLFile()
 {
-    QDir dir(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation) +
+    QDir dir(QStandardPaths::DocumentsLocation +
              QString("/") + QApplication::instance()->applicationName() + QString("/"));
     if (!dir.exists()) {
         qDebug("Dir %s doesn't exists", qPrintable(dir.path()));

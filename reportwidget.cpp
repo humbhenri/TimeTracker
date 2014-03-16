@@ -65,7 +65,7 @@ void ReportWidget::fillTableReport()
             items.clear();
         }
     }
-    ui->reportTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);    
+//    ui->reportTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     ui->reportTableView->model()->sort(0);
     foreach (TimeSpan* timespan, timespans)
         if (timespan) delete timespan;

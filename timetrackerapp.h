@@ -1,6 +1,7 @@
 #ifndef TIMETRACKERAPP_H
 #define TIMETRACKERAPP_H
 
+#include <QtWidgets>
 #include <QApplication>
 #include "mainwindow.h"
 

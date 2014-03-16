@@ -5,7 +5,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml sql
+QT       += core gui xml sql widgets
 
 TARGET = TimeTracker
 TEMPLATE = app
